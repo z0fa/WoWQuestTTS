@@ -1,0 +1,7 @@
+## Interface: 90100
+## Author: Giovanni Cavallo "z0fa"
+## Version: 1.0
+## Title: QuestTTS
+## SavedVariables: QuestTTS
+
+addon.lua
