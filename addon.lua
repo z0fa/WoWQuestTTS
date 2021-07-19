@@ -38,6 +38,14 @@ function addon:ReadQuest(fromQuestLog)
     local title = C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
     local description, objective = GetQuestLogQuestText()
     text = title .. "\n" .. description .. "\n" .. objective
+  elseif (QuestFrameRewardPanel:IsShown()) then
+    -- local title = GetTitleText()
+    local reward = GetRewardText()
+    text = reward
+  elseif (QuestFrameProgressPanel:IsShown()) then
+    -- local title = GetTitleText()
+    local progress = GetProgressText()
+    text = progress
   else
     local title = GetTitleText()
     local description = GetQuestText()
