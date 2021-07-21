@@ -3,6 +3,7 @@ local addon = CreateFrame("Frame")
 local frames = {
   QuestTTSPlayButton1 = nil,
   QuestTTSPlayButton2 = nil,
+  QuestTTSPlayButton3 = nil,
 }
 
 local state = {
@@ -14,8 +15,9 @@ function addon:Init()
   addon:RegisterEvent("VOICE_CHAT_TTS_PLAYBACK_FINISHED")
   addon:RegisterEvent("VOICE_CHAT_TTS_PLAYBACK_FAILED")
 
-  frames.QuestTTSPlayButton1 = frames:InitQuestTTSPlayButton(QuestMapFrame.DetailsFrame, 18, 30, true)
-  frames.QuestTTSPlayButton2 = frames:InitQuestTTSPlayButton(QuestFrame, -10, -30, false)
+  frames.QuestTTSPlayButton1 = frames:InitQuestTTSPlayButton(QuestMapFrame.DetailsFrame, 18, 30, "questlog")
+  frames.QuestTTSPlayButton2 = frames:InitQuestTTSPlayButton(QuestFrame, -10, -30, "")
+  frames.QuestTTSPlayButton3 = frames:InitQuestTTSPlayButton(GossipFrame, -10, -30, "gossip")
 end
 
 function addon:OnEvent(event)
@@ -23,10 +25,11 @@ function addon:OnEvent(event)
     state.isPlaying = false
     frames.QuestTTSPlayButton1:Update()
     frames.QuestTTSPlayButton2:Update()
+    frames.QuestTTSPlayButton3:Update()
   end
 end
 
-function addon:ReadQuest(fromQuestLog)
+function addon:ReadQuest(source)
   if state.isPlaying then
     addon:TTSStop()
     return
@@ -34,10 +37,13 @@ function addon:ReadQuest(fromQuestLog)
 
   local text = ""
 
-  if (fromQuestLog) then
+  if (source == "questlog" ) then
     local title = C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
     local description, objective = GetQuestLogQuestText()
     text = title .. "\n" .. description .. "\n" .. objective
+  elseif (source == "gossip" ) then
+    local info = C_GossipInfo.GetText()
+    text = info
   elseif (QuestFrameRewardPanel:IsShown()) then
     -- local title = GetTitleText()
     local reward = GetRewardText()
@@ -69,6 +75,7 @@ function addon:TTSPlay(text)
   TextToSpeech_Speak(text, TextToSpeech_GetSelectedVoice("standard"))
   frames.QuestTTSPlayButton1:Update()
   frames.QuestTTSPlayButton2:Update()
+  frames.QuestTTSPlayButton3:Update()
 end
 
 function addon:TTSStop()
@@ -76,6 +83,7 @@ function addon:TTSStop()
   C_VoiceChat.StopSpeakingText()
   frames.QuestTTSPlayButton1:Update()
   frames.QuestTTSPlayButton2:Update()
+  frames.QuestTTSPlayButton3:Update()
 end
 
 function frames:InitQuestTTSPlayButton(parent, x, y, fromQuestLog)
