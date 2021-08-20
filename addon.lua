@@ -4,6 +4,7 @@ local frames = {
   QuestTTSPlayButton1 = nil,
   QuestTTSPlayButton2 = nil,
   QuestTTSPlayButton3 = nil,
+  QuestTTSPlayButton4 = nil,
 }
 
 local state = {
@@ -18,6 +19,7 @@ function addon:Init()
   frames.QuestTTSPlayButton1 = frames:InitQuestTTSPlayButton(QuestMapFrame.DetailsFrame, 18, 30, "questlog")
   frames.QuestTTSPlayButton2 = frames:InitQuestTTSPlayButton(QuestFrame, -10, -30, "")
   frames.QuestTTSPlayButton3 = frames:InitQuestTTSPlayButton(GossipFrame, -10, -30, "gossip")
+  frames.QuestTTSPlayButton4 = frames:InitQuestTTSPlayButton(addon:ImmersionGetFrame(), -59, -17, "immersion")
 end
 
 function addon:OnEvent(event)
@@ -26,6 +28,7 @@ function addon:OnEvent(event)
     frames.QuestTTSPlayButton1:Update()
     frames.QuestTTSPlayButton2:Update()
     frames.QuestTTSPlayButton3:Update()
+    frames.QuestTTSPlayButton4:Update()
   end
 end
 
@@ -37,11 +40,11 @@ function addon:ReadQuest(source)
 
   local text = ""
 
-  if (source == "questlog" ) then
+  if (source == "questlog") then
     local title = C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
     local description, objective = GetQuestLogQuestText()
     text = title .. "\n" .. description .. "\n" .. objective
-  elseif (source == "gossip" ) then
+  elseif (source == "gossip" or (source == "immersion" and addon:ImmersionIsGossip()) ) then
     local info = C_GossipInfo.GetText()
     text = info
   elseif (QuestFrameRewardPanel:IsShown()) then
@@ -76,6 +79,7 @@ function addon:TTSPlay(text)
   frames.QuestTTSPlayButton1:Update()
   frames.QuestTTSPlayButton2:Update()
   frames.QuestTTSPlayButton3:Update()
+  frames.QuestTTSPlayButton4:Update()
 end
 
 function addon:TTSStop()
@@ -84,9 +88,28 @@ function addon:TTSStop()
   frames.QuestTTSPlayButton1:Update()
   frames.QuestTTSPlayButton2:Update()
   frames.QuestTTSPlayButton3:Update()
+  frames.QuestTTSPlayButton4:Update()
+end
+
+function addon:ImmersionGetFrame()
+  if (ImmersionFrame and ImmersionFrame.TalkBox and ImmersionFrame.TalkBox.MainFrame) then
+    return ImmersionFrame.TalkBox.MainFrame
+  end
+
+  return -1
+end
+
+function addon:ImmersionIsGossip()
+  return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTexture():find("GossipGossipIcon")
 end
 
 function frames:InitQuestTTSPlayButton(parent, x, y, fromQuestLog)
+  if (parent == -1) then
+    return {
+      Update = function() end
+    }
+  end
+
   local button = CreateFrame("Button", nil, parent)
   button:SetNormalTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up")
   button:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
