@@ -5,3 +5,6 @@ This project is experimental, expect bugs.
 Demo: https://youtu.be/MdeevvKw__M  
 Curse: https://www.curseforge.com/wow/addons/questtts  
 Donate: https://paypal.me/z0fa  
+
+# Credits
+- [FangOfAsgard](https://www.curseforge.com/members/fangofasgard): keybind and dynamic voice

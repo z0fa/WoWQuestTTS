@@ -20,6 +20,8 @@ function addon:Init()
   frames.QuestTTSPlayButton2 = frames:InitQuestTTSPlayButton(QuestFrame, -10, -30, "")
   frames.QuestTTSPlayButton3 = frames:InitQuestTTSPlayButton(GossipFrame, -10, -30, "gossip")
   frames.QuestTTSPlayButton4 = frames:InitQuestTTSPlayButton(addon:ImmersionGetFrame(), -59, -17, "immersion")
+
+  QuestTTS.dynamicVoice = QuestTTS.dynamicVoice or false
 end
 
 function addon:OnEvent(event)
@@ -65,6 +67,39 @@ function addon:ReadQuest(source)
   addon:TTSPlay(addon:CleanText(text))
 end
 
+function addon:KeyboundReadQuest()
+  local isImmersionLoaded = addon.ImmersionGetFrame() ~= -1
+  local isQuestFocused = QuestMapFrame_GetFocusedQuestID()
+
+  if WorldMapFrame:IsVisible() and isQuestFocused then
+    addon:ReadQuest("questlog")
+  elseif QuestFrame:IsVisible() then
+    addon:ReadQuest("")
+  elseif GossipFrame:IsVisible() and not isImmersionLoaded then
+    addon:ReadQuest("gossip")
+  elseif isImmersionLoaded and addon.ImmersionGetFrame():IsVisible() then
+    addon:ReadQuest("immersion")
+  else
+    addon:TTSStop()
+  end
+end
+
+function addon:RunCmd(msg)
+  local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)")
+
+  if cmd == "play" then
+    addon:KeyboundReadQuest()
+    addon:Print("Playing...")
+  elseif cmd == "stop" then
+    addon:TTSStop()
+    addon:Print("Stopping...")
+  elseif cmd == "dvoice" then
+    QuestTTS.dynamicVoice = not QuestTTS.dynamicVoice
+    local status = QuestTTS.dynamicVoice and "ENABLED" or "DISABLED"
+    addon:Print("Experimental dynamic voice is now " .. status)
+  end
+end
+
 function addon:CleanText(text)
   local toRet = text
 
@@ -75,7 +110,7 @@ end
 
 function addon:TTSPlay(text)
   state.isPlaying = true
-  TextToSpeech_Speak(text, TextToSpeech_GetSelectedVoice("standard"))
+  TextToSpeech_Speak(text, TextToSpeech_GetSelectedVoice(addon:GetTTSVoice()))
   frames.QuestTTSPlayButton1:Update()
   frames.QuestTTSPlayButton2:Update()
   frames.QuestTTSPlayButton3:Update()
@@ -103,6 +138,30 @@ function addon:ImmersionIsGossip()
   return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTexture():find("GossipGossipIcon")
 end
 
+function addon:GetTTSVoice()
+  local toRet = "standard"
+
+  if not QuestTTS.dynamicVoice then
+    return toRet
+  end
+
+  if UnitExists("target") and UnitSex("target") == Enum.Unitsex.Female then
+    toRet = "standard"
+  else
+    toRet = "alternate"
+  end
+
+  return toRet
+end
+
+function addon:Print(msg)
+  print("|cffff8000QuestTTS: |r" .. msg)
+end
+
+function addon:Dump(var)
+  DevTools_Dump(var)
+end
+
 function frames:InitQuestTTSPlayButton(parent, x, y, fromQuestLog)
   if (parent == -1) then
     return {
@@ -116,7 +175,7 @@ function frames:InitQuestTTSPlayButton(parent, x, y, fromQuestLog)
   button:SetPoint("TOPRIGHT", x, y)
   button:SetWidth(22)
   button:SetHeight(22)
-  button:RegisterForClicks("LeftButtonUp", "RightButtonDown");
+  button:RegisterForClicks("LeftButtonUp", "RightButtonDown")
   button:SetScript("OnClick", function(_, event)
     if event == "RightButton" then
       InterfaceOptionsAccessibilityPanelConfigureTextToSpeechButton_OnClick()
@@ -134,5 +193,12 @@ function frames:InitQuestTTSPlayButton(parent, x, y, fromQuestLog)
 
   return button
 end
+
+QuestTTS = QuestTTS or {}
+BINDING_HEADER_QUESTTTS = "Quest TTS"
+BINDING_NAME_QUESTTTS_PLAY = "Read quest"
+SLASH_QUESTTTS1 = "/qtts"
+SlashCmdList["QUESTTTS"] = function(msg) addon:RunCmd(msg) end
+function QuestTTSKeyboundReadQuest() addon:KeyboundReadQuest() end
 
 addon:Init()

@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="QUESTTTS_PLAY" header="QUESTTTS" category="ADDONS">
+    QuestTTSKeyboundReadQuest()
+  </Binding>
+</Bindings>
