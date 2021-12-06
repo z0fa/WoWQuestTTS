@@ -50,11 +50,11 @@ function addon:ReadQuest(source)
     local info = C_GossipInfo.GetText()
     text = info
   elseif (QuestFrameRewardPanel:IsShown()) then
-    -- local title = GetTitleText()
+    local title = GetTitleText()
     local reward = GetRewardText()
     text = reward
   elseif (QuestFrameProgressPanel:IsShown()) then
-    -- local title = GetTitleText()
+    local title = GetTitleText()
     local progress = GetProgressText()
     text = progress
   else
