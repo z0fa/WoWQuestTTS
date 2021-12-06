@@ -139,16 +139,16 @@ function addon:ImmersionIsGossip()
 end
 
 function addon:GetTTSVoice()
-  local toRet = "standard"
+  local toRet = 0
 
   if not QuestTTS.dynamicVoice then
     return toRet
   end
 
   if UnitExists("target") and UnitSex("target") == Enum.Unitsex.Female then
-    toRet = "standard"
+    toRet = 0
   else
-    toRet = "alternate"
+    toRet = 1
   end
 
   return toRet
