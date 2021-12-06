@@ -52,11 +52,11 @@ function addon:ReadQuest(source)
   elseif (QuestFrameRewardPanel:IsShown()) then
     local title = GetTitleText()
     local reward = GetRewardText()
-    text = reward
+    text = title .. "\n" .. reward
   elseif (QuestFrameProgressPanel:IsShown()) then
     local title = GetTitleText()
     local progress = GetProgressText()
-    text = progress
+    text = title .. "\n" .. progress
   else
     local title = GetTitleText()
     local description = GetQuestText()
