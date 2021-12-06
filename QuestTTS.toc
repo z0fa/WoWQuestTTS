@@ -1,4 +1,4 @@
-## Interface: 90100
+## Interface: 90105
 ## Author: Giovanni Cavallo "z0fa"
 ## Version: 1.0
 ## Title: QuestTTS
