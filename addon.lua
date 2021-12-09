@@ -5,6 +5,7 @@ local frames = {
   QuestTTSPlayButton2 = nil,
   QuestTTSPlayButton3 = nil,
   QuestTTSPlayButton4 = nil,
+  QuestTTSPlayButton5 = nil,
 }
 
 local state = {
@@ -20,6 +21,7 @@ function addon:Init()
   frames.QuestTTSPlayButton2 = frames:InitQuestTTSPlayButton(QuestFrame, -10, -30, "")
   frames.QuestTTSPlayButton3 = frames:InitQuestTTSPlayButton(GossipFrame, -10, -30, "gossip")
   frames.QuestTTSPlayButton4 = frames:InitQuestTTSPlayButton(addon:ImmersionGetFrame(), -59, -17, "immersion")
+  frames.QuestTTSPlayButton5 = frames:InitQuestTTSPlayButton(ItemTextFrame, -10, -30, "book")
 
   QuestTTS.dynamicVoice = QuestTTS.dynamicVoice or false
 end
@@ -27,10 +29,7 @@ end
 function addon:OnEvent(event)
   if event == "VOICE_CHAT_TTS_PLAYBACK_FINISHED" or event == "VOICE_CHAT_TTS_PLAYBACK_FAILED" then
     state.isPlaying = false
-    frames.QuestTTSPlayButton1:Update()
-    frames.QuestTTSPlayButton2:Update()
-    frames.QuestTTSPlayButton3:Update()
-    frames.QuestTTSPlayButton4:Update()
+    frames:Update()
   end
 end
 
@@ -49,6 +48,10 @@ function addon:ReadQuest(source)
   elseif (source == "gossip" or (source == "immersion" and addon:ImmersionIsGossip()) ) then
     local info = C_GossipInfo.GetText()
     text = info
+  elseif (source == "book") then
+    local title = ItemTextGetItem()
+    local description = ItemTextGetText()
+    text = title .. "\n" .. description
   elseif (QuestFrameRewardPanel:IsShown()) then
     local title = GetTitleText()
     local reward = GetRewardText()
@@ -111,19 +114,13 @@ end
 function addon:TTSPlay(text)
   state.isPlaying = true
   TextToSpeech_Speak(text, TextToSpeech_GetSelectedVoice(addon:GetTTSVoice()))
-  frames.QuestTTSPlayButton1:Update()
-  frames.QuestTTSPlayButton2:Update()
-  frames.QuestTTSPlayButton3:Update()
-  frames.QuestTTSPlayButton4:Update()
+  frames:Update()
 end
 
 function addon:TTSStop()
   state.isPlaying = false
   C_VoiceChat.StopSpeakingText()
-  frames.QuestTTSPlayButton1:Update()
-  frames.QuestTTSPlayButton2:Update()
-  frames.QuestTTSPlayButton3:Update()
-  frames.QuestTTSPlayButton4:Update()
+  frames:Update()
 end
 
 function addon:ImmersionGetFrame()
@@ -192,6 +189,14 @@ function frames:InitQuestTTSPlayButton(parent, x, y, fromQuestLog)
   end
 
   return button
+end
+
+function frames:Update()
+  frames.QuestTTSPlayButton1:Update()
+  frames.QuestTTSPlayButton2:Update()
+  frames.QuestTTSPlayButton3:Update()
+  frames.QuestTTSPlayButton4:Update()
+  frames.QuestTTSPlayButton5:Update()
 end
 
 QuestTTS = QuestTTS or {}
