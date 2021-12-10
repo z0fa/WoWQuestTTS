@@ -21,7 +21,7 @@ function addon:Init()
   frames.QuestTTSPlayButton2 = frames:InitQuestTTSPlayButton(QuestFrame, -10, -30, "")
   frames.QuestTTSPlayButton3 = frames:InitQuestTTSPlayButton(GossipFrame, -10, -30, "gossip")
   frames.QuestTTSPlayButton4 = frames:InitQuestTTSPlayButton(addon:ImmersionGetFrame(), -59, -17, "immersion")
-  frames.QuestTTSPlayButton5 = frames:InitQuestTTSPlayButton(ItemTextFrame, -10, -30, "book")
+  frames.QuestTTSPlayButton5 = frames:InitQuestTTSPlayButton(ItemTextFrame, -23, 0, "book")
 
   QuestTTS.dynamicVoice = QuestTTS.dynamicVoice or false
 end
