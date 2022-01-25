@@ -45,7 +45,7 @@ function addon:ReadQuest(source)
     local title = C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
     local description, objective = GetQuestLogQuestText()
     text = title .. "\n" .. description .. "\n" .. objective
-  elseif (source == "gossip" or (source == "immersion" and addon:ImmersionIsGossip()) ) then
+  elseif (source == "gossip" or (source == "immersion" and addon:ImmersionIsGossip())) then
     local info = C_GossipInfo.GetText()
     text = info
   elseif (source == "book") then
@@ -132,7 +132,7 @@ function addon:ImmersionGetFrame()
 end
 
 function addon:ImmersionIsGossip()
-  return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTexture():find("GossipGossipIcon")
+  return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTextureFilePath():find("GossipGossipIcon")
 end
 
 function addon:GetTTSVoice()
