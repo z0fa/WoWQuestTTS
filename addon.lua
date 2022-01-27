@@ -45,7 +45,7 @@ function addon:ReadQuest(source)
     local title = C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
     local description, objective = GetQuestLogQuestText()
     text = title .. "\n" .. description .. "\n" .. objective
-  elseif (source == "gossip" or (source == "immersion" and addon:ImmersionIsGossip())) then
+  elseif (source == "gossip") then
     local info = C_GossipInfo.GetText()
     text = info
   elseif (source == "book") then
@@ -57,6 +57,13 @@ function addon:ReadQuest(source)
     local reward = GetRewardText()
     text = title .. "\n" .. reward
   elseif (QuestFrameProgressPanel:IsShown()) then
+    local title = GetTitleText()
+    local progress = GetProgressText()
+    text = title .. "\n" .. progress
+  elseif (source == "immersion" and addon:ImmersionIsGossip()) then
+    local info = C_GossipInfo.GetText()
+    text = info
+  elseif (source == "immersion" and addon:ImmersionIsQuestProgress()) then
     local title = GetTitleText()
     local progress = GetProgressText()
     text = title .. "\n" .. progress
@@ -133,6 +140,10 @@ end
 
 function addon:ImmersionIsGossip()
   return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTextureFilePath():find("GossipGossipIcon")
+end
+
+function addon:ImmersionIsQuestProgress()
+  return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTextureFilePath():find("ActiveQuestIcon")
 end
 
 function addon:GetTTSVoice()
