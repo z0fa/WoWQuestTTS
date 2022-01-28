@@ -63,10 +63,11 @@ function addon:ReadQuest(source)
   elseif (source == "immersion" and addon:ImmersionIsGossip()) then
     local info = C_GossipInfo.GetText()
     text = info
-  elseif (source == "immersion" and addon:ImmersionIsQuestProgress()) then
+  elseif (source == "immersion" and addon:ImmersionIsQuest()) then
     local title = GetTitleText()
-    local progress = GetProgressText()
-    text = title .. "\n" .. progress
+    local progress = GetProgressText() or GetRewardText()
+    local reward = GetRewardText()
+    text = title .. "\n" .. progress .. "\n" .. reward
   else
     local title = GetTitleText()
     local description = GetQuestText()
@@ -142,7 +143,7 @@ function addon:ImmersionIsGossip()
   return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTextureFilePath():find("GossipGossipIcon")
 end
 
-function addon:ImmersionIsQuestProgress()
+function addon:ImmersionIsQuest()
   return ImmersionFrame.TalkBox.MainFrame.Indicator:GetTextureFilePath():find("ActiveQuestIcon")
 end
 
