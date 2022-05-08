@@ -1,5 +1,5 @@
 <Bindings>
-  <Binding name="QUESTTTS_PLAY" header="QUESTTTS" category="ADDONS">
-    QuestTTSKeyboundReadQuest()
+  <Binding name="Start/stop reading" header="QUESTTTS" category="ADDONS">
+    QuestTTSAddon.keybindReadQuest()
   </Binding>
 </Bindings>

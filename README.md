@@ -1,12 +1,12 @@
 # WoW QuestTTS
-World of Warcraft addon that use the 9.1 TTS api to read quests text (out load), right click on the play button to open the TTS settings.
+World of Warcraft addon that use the 9.1 TTS api to read quests text (out load), right click on the play button to open the settings.
 
 **This project is experimental, expect bugs.**
 
 # Commands
 - /qtts play: Start reading the quest
 - /qtts stop: Stop reading the quest
-- /qtts dvoice: Enable / disable the experimental dynamic voice feature
+- /qtts settings: Open the settings panel
 
 
 # Credits

@@ -2,6 +2,11 @@
 ## Author: Giovanni Cavallo "z0fa"
 ## Version: 1.0
 ## Title: QuestTTS
-## SavedVariables: QuestTTS
+## SavedVariables: QuestTTSGlobalDB
+## SavedVariablesPerCharacter: QuestTTSCharacterDB
 
-addon.lua
+leact/array.lua
+leact/addon.lua
+
+main.lua
+options.xml
