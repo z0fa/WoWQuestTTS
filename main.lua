@@ -86,8 +86,10 @@ function module.readQuest(source)
     description, objective = GetQuestLogQuestText()
   elseif source == "gossip" then
     info = C_GossipInfo.GetText()
-  elseif source == "book" then
+  elseif source == "book" and ItemTextGetPage() == 1 then
     title = ItemTextGetItem()
+    description = ItemTextGetText()
+  elseif source == "book" then
     description = ItemTextGetText()
   elseif source == "quest" and QuestFrameRewardPanel:IsShown() then
     -- title = GetTitleText()

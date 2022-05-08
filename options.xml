@@ -228,7 +228,7 @@
               justifyH="LEFT"
               justifyV="BOTTOM"
               parentKey="Line2"
-              text="If you find any bug or you have idea to improve the addon leave me a message on Curse or open an issue on GitHub, thank you :)"
+              text="If you find any bug or you have idea to improve the addon leave a comment on Curse or open an issue on GitHub, thank you :)"
             >
               <Anchors>
                 <Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="BOTTOMLEFT" x="0" y="0"/>
