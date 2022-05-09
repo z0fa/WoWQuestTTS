@@ -187,6 +187,7 @@
         </ButtonText>
         <Scripts>
           <OnClick>
+            InterfaceOptionsFrameCancel_OnClick()
             InterfaceOptionsAccessibilityPanelConfigureTextToSpeechButton_OnClick()
           </OnClick>
         </Scripts>

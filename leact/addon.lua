@@ -1,5 +1,6 @@
 local __namespace, __module = ...
-local Array = __module.Array --- @class ArrayFactory
+
+local Array = __module.Array --- @class Array
 
 local module = {} --- @class Addon
 
@@ -15,7 +16,7 @@ local updatePending = false
 local function runHooks()
   updatePending = false
 
-  hooks.forEach(
+  hooks:forEach(
     function(effect)
       local deps = effect.deps
       local fn = effect.fn
@@ -25,7 +26,7 @@ local function runHooks()
       if deps == nil then
         diff = true
       elseif Array.isArray(deps) then
-        deps.forEach(
+        deps:forEach(
           function(dep)
             local oldValue = dep.val
             local newValue = dep.get()
@@ -64,9 +65,9 @@ end
 --- @param value any
 --- @return ReactiveData
 function module.useState(value)
-  stateData.push(value)
+  stateData:push(value)
 
-  local stateIndex = stateData.length()
+  local stateIndex = stateData:length()
 
   local function set(newValue)
     stateData[stateIndex] = newValue
@@ -87,14 +88,14 @@ function module.useEffect(fn, deps)
   local toPush = { fn = fn, deps = nil }
 
   if type(deps) == "table" then
-    toPush.deps = Array.new(deps).map(
+    toPush.deps = Array.new(deps):map(
       function(dep)
         return { val = nil, get = dep.get, ref = dep.ref }
       end
     )
   end
 
-  hooks.push(toPush)
+  hooks:push(toPush)
 end
 
 --- comment
@@ -157,29 +158,29 @@ function module.useEvent(fn, events, once)
   end
 
   unsub = function()
-    eventsArray.forEach(
+    eventsArray:forEach(
       function(event)
-        listeners[event] = listeners[event].filter(
+        listeners[event] = listeners[event]:filter(
           function(h)
             return h ~= handler
           end
         )
 
-        if listeners[event].length() == 0 then
+        if listeners[event]:length() == 0 then
           frame:UnregisterEvent(event)
         end
       end
     )
   end
 
-  eventsArray.forEach(
+  eventsArray:forEach(
     function(event)
       if not listeners[event] then
         frame:RegisterEvent(event)
         listeners[event] = Array.new()
       end
 
-      listeners[event].push(handler)
+      listeners[event]:push(handler)
     end
   )
 
@@ -193,7 +194,7 @@ function module.useSlashCmd(fn, aliases)
   local cmdsArray = Array.new(aliases)
   local name = aliases[1]:upper()
 
-  cmdsArray.forEach(
+  cmdsArray:forEach(
     function(cmd, index)
       _G["SLASH_" .. name .. index] = "/" .. cmd
     end
@@ -250,7 +251,7 @@ end
 --- comment
 --- @param fn function
 function module.onLoad(fn)
-  onLoadHooks.push(fn)
+  onLoadHooks:push(fn)
 end
 
 --- comment
@@ -264,7 +265,7 @@ frame:SetScript(
     local handlers = listeners[event] or Array.new()
     local args = { ... }
 
-    handlers.forEach(
+    handlers:forEach(
       function(handler)
         handler(event, unpack(args))
       end
@@ -275,7 +276,7 @@ frame:SetScript(
 module.useEvent(
   function(evetName, addonName)
     if addonName == __namespace then
-      onLoadHooks.forEach(
+      onLoadHooks:forEach(
         function(fn)
           fn()
         end

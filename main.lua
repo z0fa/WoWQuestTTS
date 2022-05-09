@@ -1,6 +1,6 @@
 local __namespace, __module = ...
 
-local Array = __module.Array --- @class ArrayFactory
+local Array = __module.Array --- @class Array
 local Addon = __module.Addon --- @class Addon
 
 local onInit = Addon.onInit
@@ -180,7 +180,7 @@ function module.getVoice()
   end
 
   local voices = Array.new(C_VoiceChat.GetTtsVoices())
-  local voiceToRet = voices.find(
+  local voiceToRet = voices:find(
     function(v)
       if v.voiceID == toRet then
         return true
@@ -232,7 +232,7 @@ function module.registerVoiceSetting(key, frame)
 
   useEffect(
     function()
-      local voice = voices.find(
+      local voice = voices:find(
         function(v)
           if v.voiceID == setting.get() then
             return true
@@ -252,7 +252,7 @@ function module.registerVoiceSetting(key, frame)
         return
       end
 
-      voices.map(
+      voices:map(
         function(voice, i)
           local info = UIDropDownMenu_CreateInfo()
           info.text = voice.name
@@ -331,19 +331,19 @@ function module.initPlayButton(onLeftClick, onRightClick)
   local immersionFrame = module.immersionGetFrame()
 
   if immersionFrame then
-    buttons.push(factory(immersionFrame, -59, -17, "immersion"))
+    buttons:push(factory(immersionFrame, -59, -17, "immersion"))
   end
 
   useEffect(
     function()
       if isPlaying.get() then
-        buttons.forEach(
+        buttons:forEach(
           (function(button)
             button:SetNormalTexture("Interface\\TimeManager\\PauseButton")
           end)
         )
       else
-        buttons.forEach(
+        buttons:forEach(
           (function(button)
             button:SetNormalTexture(
               "Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up"
