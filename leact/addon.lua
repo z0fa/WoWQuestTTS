@@ -6,11 +6,16 @@ local module = {} --- @class Addon
 
 local frame = CreateFrame("Frame", nil)
 local onLoadHooks = Array.new()
-local debugValues = {}
-local listeners = {}
+local debugValues = {} --- @type table<string, unknown>
+local listeners = {} --- @type table<WowEvent | any, Array>
 local stateData = Array.new()
 local hooks = Array.new()
 local updatePending = false
+
+--- @class ReactiveData
+--- @field get fun(): unknown
+--- @field set fun(newValue: any)
+--- @field ref integer
 
 --- comment
 local function runHooks()
@@ -55,11 +60,6 @@ local function triggerUpdate()
   updatePending = true
   module.nextTick(runHooks)
 end
-
---- @class ReactiveData
---- @field get fun(): unknown
---- @field set fun(newValue: any)
---- @field ref integer
 
 --- comment
 --- @param value any
@@ -234,10 +234,10 @@ function module.print(msg)
   print("|cffff8000" .. __namespace .. ": |r" .. tostring(msg))
 end
 
----comment
----@param obj table
----@param key string
----@return unknown
+--- comment
+--- @param obj table
+--- @param key string
+--- @return function
 function module.wrap(obj, key)
   return function(...)
     if type(obj[key]) == "function" then
