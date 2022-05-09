@@ -3,7 +3,9 @@ local __namespace, __module = ...
 local Array = __module.Array --- @class ArrayFactory
 local Addon = __module.Addon --- @class Addon
 
+local onInit = Addon.onInit
 local onLoad = Addon.onLoad
+local wrap = Addon.wrap
 local useState = Addon.useState
 local useEffect = Addon.useEffect
 local useEvent = Addon.useEvent
@@ -25,6 +27,18 @@ local settings = {
   voice3 = useSavedVariable(globalDB, "voice3", Enum.TtsVoiceType.Standard),
   alert = useSavedVariable(globalDB, "alert", 0),
 }
+
+onInit(
+  function()
+    BINDING_HEADER_QUESTTTS = __namespace
+
+    QuestTTSAddon = {}
+    QuestTTSAddon.name = __namespace
+    QuestTTSAddon.registerCheckSetting = wrap(module, "registerCheckSetting")
+    QuestTTSAddon.registerVoiceSetting = wrap(module, "registerVoiceSetting")
+    QuestTTSAddon.keybindReadQuest = wrap(module, "keybindReadQuest")
+  end
+)
 
 onLoad(
   function()
@@ -340,11 +354,3 @@ function module.initPlayButton(onLeftClick, onRightClick)
     end, { isPlaying }
   )
 end
-
-BINDING_HEADER_QUESTTTS = __namespace
-
-QuestTTSAddon = {}
-QuestTTSAddon.name = __namespace
-QuestTTSAddon.registerCheckSetting = module.registerCheckSetting
-QuestTTSAddon.registerVoiceSetting = module.registerVoiceSetting
-QuestTTSAddon.keybindReadQuest = module.keybindReadQuest

@@ -55,12 +55,6 @@ local function triggerUpdate()
   module.nextTick(runHooks)
 end
 
---- comment
---- @param fn function
-function module.nextTick(fn)
-  C_Timer.After(0, fn)
-end
-
 --- @class ReactiveData
 --- @field get fun(): unknown
 --- @field set fun(newValue: any)
@@ -111,6 +105,35 @@ end
 
 --- comment
 function module.useContext()
+end
+
+--- comment
+--- @param globalName string
+--- @param varName string
+--- @param defaultValue any
+--- @return ReactiveData
+function module.useSavedVariable(globalName, varName, defaultValue)
+  local toRet = module.useState(defaultValue)
+
+  module.onLoad(
+    function()
+      _G[globalName] = _G[globalName] or {}
+
+      if (_G[globalName][varName] == nil) then
+        _G[globalName][varName] = defaultValue
+      end
+
+      toRet.set(_G[globalName][varName])
+    end
+  )
+
+  module.useEffect(
+    function()
+      _G[globalName][varName] = toRet.get()
+    end, { toRet }
+  )
+
+  return toRet
 end
 
 --- comment
@@ -199,32 +222,9 @@ function module.useDebugValue(label, dep)
 end
 
 --- comment
---- @param globalName string
---- @param varName string
---- @param defaultValue any
---- @return ReactiveData
-function module.useSavedVariable(globalName, varName, defaultValue)
-  local toRet = module.useState(defaultValue)
-
-  module.onLoad(
-    function()
-      _G[globalName] = _G[globalName] or {}
-
-      if (_G[globalName][varName] == nil) then
-        _G[globalName][varName] = defaultValue
-      end
-
-      toRet.set(_G[globalName][varName])
-    end
-  )
-
-  module.useEffect(
-    function()
-      _G[globalName][varName] = toRet.get()
-    end, { toRet }
-  )
-
-  return toRet
+--- @param fn function
+function module.nextTick(fn)
+  C_Timer.After(0, fn)
 end
 
 --- comment
@@ -233,10 +233,30 @@ function module.print(msg)
   print("|cffff8000" .. __namespace .. ": |r" .. tostring(msg))
 end
 
+---comment
+---@param obj table
+---@param key string
+---@return unknown
+function module.wrap(obj, key)
+  return function(...)
+    if type(obj[key]) == "function" then
+      return obj[key](...)
+    end
+
+    return obj[key]
+  end
+end
+
 --- comment
 --- @param fn function
 function module.onLoad(fn)
   onLoadHooks.push(fn)
+end
+
+--- comment
+--- @param fn function
+function module.onInit(fn)
+  fn()
 end
 
 frame:SetScript(
