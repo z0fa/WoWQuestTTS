@@ -169,7 +169,7 @@ end
 
 function module.getVoice()
   local toRet = settings.voice1.get()
-  local unitSex = UnitSex("target")
+  local unitSex = UnitSex("questnpc") or UnitSex("npc")
 
   if unitSex == 2 then -- male
     toRet = settings.voice1.get()
