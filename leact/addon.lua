@@ -6,6 +6,7 @@ local module = {} --- @class Addon
 
 local frame = CreateFrame("Frame", nil)
 local onLoadHooks = Array.new()
+local onUpdateHooks = Array.new()
 local debugValues = {} --- @type table<string, unknown>
 local listeners = {} --- @type table<WowEvent | any, Array>
 local stateData = Array.new()
@@ -258,6 +259,24 @@ end
 --- @param fn function
 function module.onInit(fn)
   fn()
+end
+
+--- comment
+--- @param fn function
+function module.onUpdate(fn)
+  onUpdateHooks:push(fn)
+
+  if not frame:GetScript("OnUpdate") then
+    frame:SetScript(
+      "OnUpdate", function(frame, delta)
+        onUpdateHooks:forEach(
+          function(fn)
+            fn(delta)
+          end
+        )
+      end
+    )
+  end
 end
 
 frame:SetScript(
