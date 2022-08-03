@@ -1,9 +1,10 @@
 ## Interface: 90205
 ## Author: Giovanni Cavallo "z0fa"
-## Version: 1.0
+## Version: @project-version@
 ## Title: QuestTTS
 ## SavedVariables: QuestTTSGlobalDB
 ## SavedVariablesPerCharacter: QuestTTSCharacterDB
+## X-Wago-ID: 7nGv2eGx
 
 leact/array.lua
 leact/addon.lua
