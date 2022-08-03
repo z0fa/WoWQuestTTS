@@ -5,6 +5,7 @@
 ## SavedVariables: QuestTTSGlobalDB
 ## SavedVariablesPerCharacter: QuestTTSCharacterDB
 ## X-Wago-ID: 7nGv2eGx
+## X-Curse-Project-ID: 504658
 
 leact/array.lua
 leact/addon.lua
