@@ -1,4 +1,4 @@
-# WoW QuestTTS
+# WoW Quest TTS
 World of Warcraft addon that use the 9.1 TTS api to read quests text (out load), right click on the play button to open the settings.
 
 
