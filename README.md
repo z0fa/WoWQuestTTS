@@ -15,5 +15,6 @@ World of Warcraft addon that use the 9.1 TTS api to read quests text (out load),
 # Links
 - Demo: https://youtu.be/MdeevvKw__M
 - Project on Curse: https://www.curseforge.com/wow/addons/questtts
+- Project on Wago: https://addons.wago.io/addons/questtts
 - Project on GitHub: https://github.com/z0fa/WoWQuestTTS
 - Donate: https://paypal.me/z0fa
