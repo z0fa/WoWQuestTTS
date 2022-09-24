@@ -7,8 +7,8 @@
 ## X-Wago-ID: 7nGv2eGx
 ## X-Curse-Project-ID: 504658
 
-leact/array.lua
-leact/addon.lua
+libs/array.lua
+libs/addon.lua
 
 main.lua
 options.xml
