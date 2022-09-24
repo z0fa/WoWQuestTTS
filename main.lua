@@ -26,7 +26,14 @@ local settings = {
   voice2 = useSavedVariable(globalDB, "voice2", Enum.TtsVoiceType.Standard),
   voice3 = useSavedVariable(globalDB, "voice3", Enum.TtsVoiceType.Standard),
   alert = useSavedVariable(globalDB, "alert", 0),
+  autoStartRead = useSavedVariable(globalDB, "autoStartRead", false),
+  autoStopRead = useSavedVariable(globalDB, "autoStopRead", false),
 }
+
+local isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local isWOTLK = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 
 onInit(
   function()
@@ -96,10 +103,10 @@ function module.readQuest(source)
   local progress = ""
 
   if source == "questlog" then
-    title = C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
+    title = module.getQuestLogTitle()
     description, objective = GetQuestLogQuestText()
   elseif source == "gossip" then
-    info = C_GossipInfo.GetText()
+    info = module.getGossipText()
   elseif source == "book" and ItemTextGetPage() == 1 then
     title = ItemTextGetItem()
     description = ItemTextGetText()
@@ -116,7 +123,7 @@ function module.readQuest(source)
     description = GetQuestText()
     objective = GetObjectiveText()
   elseif source == "immersion" and module.immersionIsGossip() then
-    info = C_GossipInfo.GetText()
+    info = module.getGossipText()
   elseif source == "immersion" and module.immersionIsQuestActive() then
     -- title = GetTitleText()
     progress = GetProgressText()
@@ -270,6 +277,30 @@ function module.registerVoiceSetting(key, frame)
   )
 end
 
+function module.getGossipText()
+  local toRet = ""
+
+  if isRetail then
+    toRet = C_GossipInfo.GetText()
+  elseif isWOTLK then
+    toRet = GetGossipText()
+  end
+
+  return toRet
+end
+
+function module.getQuestLogTitle()
+  local toRet = ""
+
+  if isRetail then
+    toRet = C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
+  elseif isWOTLK then
+    toRet = GetQuestLogTitle(GetQuestLogSelection())
+  end
+
+  return toRet
+end
+
 function module.immersionGetFrame()
   return ((ImmersionFrame or {}).TalkBox or {}).MainFrame
 end
@@ -319,14 +350,19 @@ function module.initPlayButton(onLeftClick, onRightClick)
     return toRet
   end
 
-  local buttons = Array.new(
-    {
-      factory(QuestMapFrame.DetailsFrame, 18, 30, "questlog"),
-      factory(QuestFrame, -10, -30, "quest"),
-      factory(GossipFrame, -10, -30, "gossip"),
-      factory(ItemTextFrame, -23, 0, "book"),
-    }
-  )
+  local buttons = Array.new()
+
+  if isRetail then
+    buttons:push(factory(QuestMapFrame.DetailsFrame, 18, 30, "questlog"))
+    buttons:push(factory(QuestFrame, -10, -30, "quest"))
+    buttons:push(factory(GossipFrame, -10, -30, "gossip"))
+    buttons:push(factory(ItemTextFrame, -23, 0, "book"))
+  elseif isWOTLK then
+    buttons:push(factory(QuestFrame, -54, -20, "quest"))
+    buttons:push(factory(QuestLogDetailFrame, -24, -13, "questlog"))
+    buttons:push(factory(GossipFrame, -54, -20, "gossip"))
+    buttons:push(factory(ItemTextFrame, -55, -14, "book"))
+  end
 
   local immersionFrame = module.immersionGetFrame()
 
