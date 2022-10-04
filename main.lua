@@ -359,6 +359,7 @@ function module.initPlayButton(onLeftClick, onRightClick)
     buttons:push(factory(ItemTextFrame, -23, 0, "book"))
   elseif isWOTLK then
     buttons:push(factory(QuestFrame, -54, -20, "quest"))
+    buttons:push(factory(QuestLogFrame, -24, -13, "questlog"))
     buttons:push(factory(QuestLogDetailFrame, -24, -13, "questlog"))
     buttons:push(factory(GossipFrame, -54, -20, "gossip"))
     buttons:push(factory(ItemTextFrame, -55, -14, "book"))
