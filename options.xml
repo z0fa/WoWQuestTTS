@@ -91,6 +91,64 @@
         </Scripts>
       </CheckButton>
 
+      <CheckButton name="$parentAutoReadQuest" inherits="OptionsBaseCheckButtonTemplate">
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentText" inherits="GameFontHighlightLeft" parentKey="Text" text="Auto read quest text">
+              <Size x="275"/>
+              <Anchors>
+                <Anchor point="LEFT" relativePoint="RIGHT">
+                  <Offset>
+                    <AbsDimension x="2" y="1"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentSubText" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="300" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            QuestTTSAddon.registerCheckSetting("autoReadQuest", self)
+          </OnLoad>
+        </Scripts>
+      </CheckButton>
+
+      <CheckButton name="$parentAutoReadGossip" inherits="OptionsBaseCheckButtonTemplate">
+        <Layers>
+          <Layer level="ARTWORK">
+            <FontString name="$parentText" inherits="GameFontHighlightLeft" parentKey="Text" text="Auto read gossip text">
+              <Size x="275"/>
+              <Anchors>
+                <Anchor point="LEFT" relativePoint="RIGHT">
+                  <Offset>
+                    <AbsDimension x="2" y="1"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="$parentAutoReadQuest" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-8"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            QuestTTSAddon.registerCheckSetting("autoReadGossip", self)
+          </OnLoad>
+        </Scripts>
+      </CheckButton>
+
       <Frame name="$parentVoice1DropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
         <Anchors>
           <Anchor point="TOPLEFT" relativeTo="$parentReadObjective" relativePoint="BOTTOMLEFT">

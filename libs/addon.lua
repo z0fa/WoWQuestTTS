@@ -236,20 +236,6 @@ function module.print(msg)
 end
 
 --- comment
---- @param obj table
---- @param key string
---- @return function
-function module.wrap(obj, key)
-  return function(...)
-    if type(obj[key]) == "function" then
-      return obj[key](...)
-    end
-
-    return obj[key]
-  end
-end
-
---- comment
 --- @param fn function
 function module.onLoad(fn)
   onLoadHooks:push(fn)
