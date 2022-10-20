@@ -108,7 +108,7 @@ useEvent(
 
 useEvent(
   function()
-    module.updatePlayState("book", true)
+    module.updatePlayState("book", false)
   end, { "ITEM_TEXT_READY" }
 )
 useEvent(
