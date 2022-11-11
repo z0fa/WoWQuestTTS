@@ -11,5 +11,6 @@
 libs/array.lua
 libs/addon.lua
 
+settings.lua
 main.lua
 options.xml

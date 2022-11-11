@@ -1,5 +1,5 @@
 <Bindings>
-  <Binding name="Start/stop reading" header="QUESTTTS" category="ADDONS">
+  <Binding name="Start/stop reading" category="BINDING_HEADER_OTHER">
     QuestTTSAddon.keybindReadQuest()
   </Binding>
 </Bindings>

@@ -18,6 +18,9 @@ local updatePending = false
 --- @field set fun(newValue: any)
 --- @field ref integer
 
+--- @class ReactiveProxySetting: ReactiveData
+--- @field proxy {}
+
 --- comment
 local function runHooks()
   updatePending = false
@@ -133,6 +136,42 @@ function module.useSavedVariable(globalName, varName, defaultValue)
     function()
       _G[globalName][varName] = toRet.get()
     end, { toRet }
+  )
+
+  return toRet
+end
+
+--- comment
+--- @param category {}
+--- @param name string
+--- @param globalName string
+--- @param varName string
+--- @param defaultValue any
+--- @return ReactiveProxySetting
+function module.useProxySetting(
+  category, name, globalName, varName, defaultValue
+)
+  local proxy = Settings.RegisterAddOnSetting(
+    category, name, varName, type(defaultValue), defaultValue
+  )
+
+  local toRet = module.useSavedVariable(globalName, varName, defaultValue)
+
+  local SetValue = proxy.SetValue
+  proxy.SetValue = function(self, value, force)
+    local tmp = SetValue(self, value, force)
+
+    toRet.set(proxy:GetValue())
+
+    return tmp
+  end
+
+  toRet.proxy = proxy
+
+  module.onLoad(
+    function()
+      proxy:SetValue(toRet.get())
+    end
   )
 
   return toRet
@@ -308,4 +347,3 @@ module.useEvent(
 )
 
 __module.Addon = module
-

@@ -39,7 +39,6 @@ local isWOTLK = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 
 onInit(
   function()
-    BINDING_HEADER_QUESTTTS = __namespace
 
     QuestTTSAddon = {}
     QuestTTSAddon.name = __namespace
