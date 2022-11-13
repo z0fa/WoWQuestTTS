@@ -66,6 +66,27 @@ useEvent(
   end, { "QUEST_FINISHED" }
 )
 
+useEvent(
+  function()
+    module.ttsAutoPlay("gossip")
+  end, { "GOSSIP_SHOW" }
+)
+useEvent(
+  function()
+    module.ttsAutoPlay("quest:detail")
+  end, { "QUEST_DETAIL" }
+)
+useEvent(
+  function()
+    module.ttsAutoPlay("quest:progress")
+  end, { "QUEST_PROGRESS" }
+)
+useEvent(
+  function()
+    module.ttsAutoPlay("quest:complete")
+  end, { "QUEST_COMPLETE" }
+)
+
 useSlashCmd(
   function(cmd)
     if cmd == "play" then
@@ -79,6 +100,16 @@ useSlashCmd(
     end
   end, { "qtts" }
 )
+
+function module.ttsAutoPlay(source)
+  if source:find("quest") and not settings.autoReadQuest.get() then
+    return
+  elseif source:find("gossip") and not settings.autoReadGossip.get() then
+    return
+  end
+
+  module.ttsPlay()
+end
 
 function module.ttsToggle(source)
   if isPlaying.get() then
@@ -106,7 +137,7 @@ function module.ttsPlay(source)
   elseif source == "book:1" then
     title = ItemTextGetItem()
     description = ItemTextGetText()
-  elseif source:find("^book:") then
+  elseif source and source:find("^book:") then
     description = ItemTextGetText()
   elseif source == "quest:reward" then
     -- title = GetTitleText()
@@ -152,7 +183,9 @@ end
 function module.guessSource(source)
   local toRet = source
 
-  if source == nil and QuestFrame:IsShown() then
+  local isQuestFrame = QuestFrame:IsShown() or QuestLogFrame:IsShown() or QuestLogDetailFrame:IsShown()
+
+  if source == nil and isQuestFrame then
     toRet = "quest"
   elseif source == nil and GossipFrame:IsShown() then
     toRet = "gossip"
@@ -160,14 +193,18 @@ function module.guessSource(source)
     toRet = "book"
   end
 
+  source = toRet
+
   if source == "immersion" and module.immersionIsGossip() then
     toRet = module.immersionGuessSource()
   elseif source == "quest" and QuestFrameProgressPanel:IsShown() then
     toRet = "quest:progress"
   elseif source == "quest" and QuestFrameRewardPanel:IsShown() then
     toRet = "quest:reward"
-  elseif source == "quest" then
+  elseif source == "quest" and QuestFrame:IsShown() then
     toRet = "quest:detail"
+  elseif source == "quest" then
+    toRet = "quest:focused"
   elseif source == "book" then
     toRet = "book:" .. ItemTextGetPage()
   end
