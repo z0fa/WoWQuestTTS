@@ -183,9 +183,7 @@ end
 function module.guessSource(source)
   local toRet = source
 
-  local isQuestFrame = QuestFrame:IsShown() or QuestLogFrame:IsShown() or QuestLogDetailFrame:IsShown()
-
-  if source == nil and isQuestFrame then
+  if source == nil and module.isQuestFrameShown() then
     toRet = "quest"
   elseif source == nil and GossipFrame:IsShown() then
     toRet = "gossip"
@@ -269,6 +267,20 @@ end
 function module.openSettings()
   InterfaceOptionsFrame_OpenToCategory(__namespace)
   InterfaceOptionsFrame_OpenToCategory(__namespace)
+end
+
+function isQuestFrameShown()
+  local toRet = false
+
+  if QuestFrame:IsShown() then
+    toRet = true
+  elseif Addon.isWOTLK and QuestLogFrame:IsShown() then
+    toRet = true
+  elseif Addon.isWOTLK and QuestLogDetailFrame:IsShown() then
+    toRet = true
+  end
+
+  return toRet
 end
 
 function module.getGossipText()
