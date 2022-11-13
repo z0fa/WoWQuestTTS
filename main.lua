@@ -108,7 +108,7 @@ function module.ttsAutoPlay(source)
     return
   end
 
-  module.ttsPlay()
+  module.ttsPlay(source)
 end
 
 function module.ttsToggle(source)
