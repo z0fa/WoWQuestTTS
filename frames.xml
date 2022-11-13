@@ -1,0 +1,66 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <Frame name="QuestTTSAdvertisement" virtual="true">
+    <Size y="190"/>
+    <Frames>
+      <Frame name="$parentSpam">
+        <Size x="300" y="130"/>
+        <Anchors>
+          <Anchor point="BOTTOMLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+          <Layer level="BACKGROUND">
+            <FontString
+              inherits="GameFontNormal"
+              justifyH="LEFT"
+              justifyV="BOTTOM"
+              parentKey="Line1"
+              text="Hello friend! I recently started a Twitch channel, I stream mostly WoW, Overwatch and programming tutorials (including WoW addons!)."
+            >
+              <Anchors>
+                <Anchor point="TOPLEFT" x="0" y="0"/>
+                <Anchor point="TOPRIGHT" x="0" y="0"/>
+              </Anchors>
+            </FontString>
+            <FontString
+              inherits="GameFontNormal"
+              justifyH="LEFT"
+              justifyV="BOTTOM"
+              parentKey="Line2"
+              text="The stream is in italian but if you can leave a follow to support the channel it would be fantastic."
+            >
+              <Anchors>
+                <Anchor point="TOPLEFT" x="0" y="-55"/>
+                <Anchor point="TOPRIGHT" x="0" y="0"/>
+              </Anchors>
+            </FontString>
+            <FontString
+              inherits="GameFontNormal"
+              justifyH="LEFT"
+              justifyV="BOTTOM"
+              parentKey="Line2"
+              text="If you find any bug or you have an idea to improve the addon leave a comment on Curse or open an issue on GitHub, thank you :)"
+            >
+              <Anchors>
+                <Anchor point="TOPLEFT" x="0" y="-100"/>
+                <Anchor point="TOPRIGHT" x="0" y="0"/>
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+
+      <Frame name="$parentSocials">
+        <Size x="256" y="256"/>
+        <Anchors>
+          <Anchor point="BOTTOMRIGHT" x="0" y="-10"/>
+        </Anchors>
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture name="$parentBackground" setAllPoints="true" file="Interface\AddOns\QuestTTS\assets\socials" />
+          </Layer>
+        </Layers>
+      </Frame>
+    </Frames>
+  </Frame>
+</Ui>

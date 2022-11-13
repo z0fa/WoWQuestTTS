@@ -1,4 +1,4 @@
-## Interface: 90205
+## Interface: 100000
 ## Interface-Wrath: 30400
 ## Author: Giovanni Cavallo "z0fa"
 ## Version: @project-version@
@@ -8,9 +8,10 @@
 ## X-Wago-ID: 7nGv2eGx
 ## X-Curse-Project-ID: 504658
 
+frames.xml
+
 libs/array.lua
 libs/addon.lua
 
 settings.lua
 main.lua
-options.xml

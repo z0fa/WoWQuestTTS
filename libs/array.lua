@@ -197,7 +197,22 @@ function module:push(...)
   end
 end
 
-function module:reduce()
+--- comment
+--- @param callbackFn fun(accumulator: unknown, element: unknown, index: integer, array: Array)
+--- @param initialVal unknown
+--- @return Array
+function module:reduce(callbackFn, initialVal)
+  local toRet = initialVal or nil
+
+  for i, v in ipairs(self) do
+    if toRet ~= nil then
+      toRet = callbackFn(toRet, v, i, self)
+    else
+      toRet = v
+    end
+  end
+
+  return toRet
 end
 
 function module:reduceRight()

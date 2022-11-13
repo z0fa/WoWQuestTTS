@@ -18,8 +18,10 @@ local updatePending = false
 --- @field set fun(newValue: any)
 --- @field ref integer
 
---- @class ReactiveProxySetting: ReactiveData
---- @field proxy {}
+--- @class ReactiveSavedVariable : ReactiveData
+--- @field globalName string
+--- @field varName string
+--- @field defaultValue unknown
 
 --- comment
 local function runHooks()
@@ -116,9 +118,13 @@ end
 --- @param globalName string
 --- @param varName string
 --- @param defaultValue any
---- @return ReactiveData
+--- @return ReactiveSavedVariable
 function module.useSavedVariable(globalName, varName, defaultValue)
   local toRet = module.useState(defaultValue)
+
+  toRet.globalName = globalName
+  toRet.varName = varName
+  toRet.defaultValue = defaultValue
 
   module.onLoad(
     function()
@@ -136,42 +142,6 @@ function module.useSavedVariable(globalName, varName, defaultValue)
     function()
       _G[globalName][varName] = toRet.get()
     end, { toRet }
-  )
-
-  return toRet
-end
-
---- comment
---- @param category {}
---- @param name string
---- @param globalName string
---- @param varName string
---- @param defaultValue any
---- @return ReactiveProxySetting
-function module.useProxySetting(
-  category, name, globalName, varName, defaultValue
-)
-  local proxy = Settings.RegisterAddOnSetting(
-    category, name, varName, type(defaultValue), defaultValue
-  )
-
-  local toRet = module.useSavedVariable(globalName, varName, defaultValue)
-
-  local SetValue = proxy.SetValue
-  proxy.SetValue = function(self, value, force)
-    local tmp = SetValue(self, value, force)
-
-    toRet.set(proxy:GetValue())
-
-    return tmp
-  end
-
-  toRet.proxy = proxy
-
-  module.onLoad(
-    function()
-      proxy:SetValue(toRet.get())
-    end
   )
 
   return toRet
@@ -345,5 +315,10 @@ module.useEvent(
     end
   end, { "ADDON_LOADED" }
 )
+
+module.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+module.isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+module.isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+module.isWOTLK = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 
 __module.Addon = module

@@ -19,35 +19,14 @@ local module = {}
 local isPlaying = useState(false)
 local playSource = useState("")
 
-local globalDB = "QuestTTSGlobalDB"
 local alertVersion = 1
-local settings = {
-  readTitle = useSavedVariable(globalDB, "readTitle", true),
-  readObjective = useSavedVariable(globalDB, "readObjective", true),
-  voice1 = useSavedVariable(globalDB, "voice1", Enum.TtsVoiceType.Standard),
-  voice2 = useSavedVariable(globalDB, "voice2", Enum.TtsVoiceType.Standard),
-  voice3 = useSavedVariable(globalDB, "voice3", Enum.TtsVoiceType.Standard),
-  alert = useSavedVariable(globalDB, "alert", 0),
-  autoReadQuest = useSavedVariable(globalDB, "autoReadQuest", false),
-  autoReadGossip = useSavedVariable(globalDB, "autoReadGossip", false),
-}
-
-local isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-local isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-local isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
-local isWOTLK = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+local settings = __module.settings
 
 onInit(
   function()
-
     QuestTTSAddon = {}
     QuestTTSAddon.name = __namespace
-    QuestTTSAddon.registerCheckSetting = function(...)
-      module.registerCheckSetting(...)
-    end
-    QuestTTSAddon.registerVoiceSetting = function(...)
-      module.registerVoiceSetting(...)
-    end
+
     QuestTTSAddon.keybindReadQuest = function(...)
       module.keybindReadQuest(...)
     end
@@ -172,8 +151,8 @@ useEffect(
 
     C_VoiceChat.SpeakText(
       module.getVoice().voiceID, module.cleanText(text),
-      Enum.VoiceTtsDestination.LocalPlayback, C_TTSSettings.GetSpeechRate(),
-      C_TTSSettings.GetSpeechVolume()
+      Enum.VoiceTtsDestination.LocalPlayback, settings.voiceSpeed.get(),
+      settings.voiceVolume.get()
     )
   end, { isPlaying }
 )
@@ -245,78 +224,12 @@ function module.openSettings()
   InterfaceOptionsFrame_OpenToCategory(__namespace)
 end
 
-function module.registerCheckSetting(key, frame)
-  local setting = settings[key]
-
-  useEffect(
-    function()
-      frame:SetChecked(setting.get())
-    end, { setting }
-  )
-
-  frame:SetScript(
-    "OnClick", function()
-      if frame:GetChecked() then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-      else
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-      end
-
-      setting.set(frame:GetChecked())
-    end
-  )
-end
-
-function module.registerVoiceSetting(key, frame)
-  local setting = settings[key]
-  local voices = Array.new(C_VoiceChat.GetTtsVoices())
-
-  useEffect(
-    function()
-      local voice = voices:find(
-        function(v)
-          if v.voiceID == setting.get() then
-            return true
-          end
-        end
-      )
-
-      UIDropDownMenu_SetText(frame, (voice or {}).name)
-    end, { setting }
-  )
-
-  UIDropDownMenu_SetWidth(frame, 350)
-
-  UIDropDownMenu_Initialize(
-    frame, function(_, level)
-      if (level or 1) ~= 1 then
-        return
-      end
-
-      voices:map(
-        function(voice, i)
-          local info = UIDropDownMenu_CreateInfo()
-          info.text = voice.name
-          info.value = voice.voiceID
-          info.menuList = i
-          info.checked = setting.get() == info.value
-          info.func = function()
-            setting.set(info.value)
-          end
-
-          UIDropDownMenu_AddButton(info)
-        end
-      )
-    end
-  )
-end
-
 function module.getGossipText()
   local toRet = ""
 
-  if isRetail then
+  if Addon.isRetail then
     toRet = C_GossipInfo.GetText()
-  elseif isWOTLK then
+  elseif Addon.isWOTLK then
     toRet = GetGossipText()
   end
 
@@ -326,9 +239,9 @@ end
 function module.getFocusedQuestId()
   local toRet = 0
 
-  if isRetail then
+  if Addon.isRetail then
     toRet = QuestMapFrame_GetFocusedQuestID()
-  elseif isWOTLK then
+  elseif Addon.isWOTLK then
     toRet = GetQuestLogSelection()
   end
 
@@ -338,9 +251,9 @@ end
 function module.getQuestLogTitle()
   local toRet = ""
 
-  if isRetail then
+  if Addon.isRetail then
     toRet = C_QuestLog.GetTitleForQuestID(module.getFocusedQuestId())
-  elseif isWOTLK then
+  elseif Addon.isWOTLK then
     toRet = GetQuestLogTitle(module.getFocusedQuestId())
   end
 
@@ -378,12 +291,12 @@ function module.initPlayButton(onLeftClick, onRightClick)
 
   local buttons = Array.new()
 
-  if isRetail then
+  if Addon.isRetail then
     buttons:push(factory(QuestMapFrame.DetailsFrame, 18, 30, "quest:focused"))
     buttons:push(factory(QuestFrame, -10, -30))
     buttons:push(factory(GossipFrame, -10, -30))
     buttons:push(factory(ItemTextFrame, -23, 0))
-  elseif isWOTLK then
+  elseif Addon.isWOTLK then
     buttons:push(factory(QuestFrame, -54, -20))
     buttons:push(factory(QuestLogFrame, -24, -13, "quest:focused"))
     buttons:push(factory(QuestLogDetailFrame, -24, -13, "quest:focused"))
