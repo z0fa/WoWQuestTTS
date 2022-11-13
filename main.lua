@@ -17,7 +17,6 @@ local nextTick = Addon.nextTick
 local module = {}
 
 local isPlaying = useState(false)
-local playSource = useState("")
 
 local alertVersion = 1
 local settings = __module.settings
@@ -28,14 +27,14 @@ onInit(
     QuestTTSAddon.name = __namespace
 
     QuestTTSAddon.keybindReadQuest = function(...)
-      module.keybindReadQuest(...)
+      module.ttsToggle()
     end
   end
 )
 
 onLoad(
   function()
-    module.initPlayButton(module.keybindReadQuest, module.openSettings)
+    module.initPlayButton(module.ttsToggle, module.openSettings)
 
     if (alertVersion > settings.alert.get()) then
       print(
@@ -48,122 +47,32 @@ onLoad(
 
 useEvent(
   function()
-    module.updatePlayState(playSource.get(), false)
+    isPlaying.set(false)
   end, { "VOICE_CHAT_TTS_PLAYBACK_FINISHED", "VOICE_CHAT_TTS_PLAYBACK_FAILED" }
 )
-
 useEvent(
   function()
-    module.updatePlayState("quest:detail", settings.autoReadQuest.get())
-  end, { "QUEST_DETAIL" }
-)
-useEvent(
-  function()
-    module.updatePlayState("quest:progress", settings.autoReadQuest.get())
-  end, { "QUEST_PROGRESS" }
-)
-useEvent(
-  function()
-    module.updatePlayState("quest:reward", settings.autoReadQuest.get())
-  end, { "QUEST_COMPLETE" }
-)
-useEvent(
-  function()
-    module.updatePlayState(playSource.get(), false)
-  end, { "QUEST_FINISHED" }
-)
-
-useEvent(
-  function()
-    module.updatePlayState("gossip", settings.autoReadGossip.get())
-  end, { "GOSSIP_SHOW" }
-)
-useEvent(
-  function()
-    module.updatePlayState(playSource.get(), false)
-  end, { "GOSSIP_CLOSED" }
-)
-
-useEvent(
-  function()
-    module.updatePlayState("book", false)
-  end, { "ITEM_TEXT_READY" }
-)
-useEvent(
-  function()
-    module.updatePlayState(playSource.get(), false)
+    module.ttsStop()
   end, { "ITEM_TEXT_CLOSED" }
 )
-
-useEffect(
+useEvent(
   function()
-    if not isPlaying.get() then
-      C_VoiceChat.StopSpeakingText()
-      return
-    end
-
-    local source = playSource.get()
-
-    local title = ""
-    local description = ""
-    local objective = ""
-    local info = ""
-    local reward = ""
-    local progress = ""
-
-    if source == "quest:focused" then
-      title = module.getQuestLogTitle()
-      description, objective = GetQuestLogQuestText()
-    elseif source == "gossip" then
-      info = module.getGossipText()
-    elseif source == "book:1" then
-      title = ItemTextGetItem()
-      description = ItemTextGetText()
-    elseif source:find("^book:") then
-      description = ItemTextGetText()
-    elseif source == "quest:reward" then
-      -- title = GetTitleText()
-      reward = GetRewardText()
-    elseif source == "quest:progress" then
-      -- title = GetTitleText()
-      progress = GetProgressText()
-    elseif source == "quest:detail" then
-      title = GetTitleText()
-      description = GetQuestText()
-      objective = GetObjectiveText()
-    end
-
-    local text = ""
-
-    if settings.readTitle.get() then
-      text = text .. "\n" .. title
-    end
-
-    text = text .. "\n" .. description
-
-    if settings.readObjective.get() then
-      text = text .. "\n" .. objective
-    end
-
-    text = text .. "\n" .. info
-    text = text .. "\n" .. reward
-    text = text .. "\n" .. progress
-
-    C_VoiceChat.SpeakText(
-      module.getVoice().voiceID, module.cleanText(text),
-      Enum.VoiceTtsDestination.LocalPlayback, settings.voiceSpeed.get(),
-      settings.voiceVolume.get()
-    )
-  end, { isPlaying }
+    module.ttsStop()
+  end, { "GOSSIP_CLOSED" }
+)
+useEvent(
+  function()
+    module.ttsStop()
+  end, { "QUEST_FINISHED" }
 )
 
 useSlashCmd(
   function(cmd)
     if cmd == "play" then
-      module.keybindReadQuest()
+      module.ttsToggle()
       print("Playing...")
     elseif cmd == "stop" then
-      module.updatePlayState(playSource.get(), false)
+      module.ttsStop()
       print("Stopping...")
     elseif cmd == "settings" then
       module.openSettings()
@@ -171,20 +80,121 @@ useSlashCmd(
   end, { "qtts" }
 )
 
-function module.updatePlayState(source, playing)
-  if source == "book" then
-    source = "book:" .. ItemTextGetPage()
+function module.ttsToggle(source)
+  if isPlaying.get() then
+    module.ttsStop()
+  else
+    module.ttsPlay(source)
   end
-
-  playSource.set(source)
-  isPlaying.set(playing)
 end
 
-function module.keybindReadQuest()
-  module.updatePlayState(
-    module.getFocusedQuestId() and "quest:focused" or playSource.get(),
-    not isPlaying.get()
+function module.ttsPlay(source)
+  local title = ""
+  local description = ""
+  local objective = ""
+  local info = ""
+  local reward = ""
+  local progress = ""
+
+  source = module.guessSource(source)
+
+  if source == "quest:focused" then
+    title = module.getQuestLogTitle()
+    description, objective = GetQuestLogQuestText()
+  elseif source == "gossip" then
+    info = module.getGossipText()
+  elseif source == "book:1" then
+    title = ItemTextGetItem()
+    description = ItemTextGetText()
+  elseif source:find("^book:") then
+    description = ItemTextGetText()
+  elseif source == "quest:reward" then
+    -- title = GetTitleText()
+    reward = GetRewardText()
+  elseif source == "quest:progress" then
+    -- title = GetTitleText()
+    progress = GetProgressText()
+  elseif source == "quest:detail" then
+    title = GetTitleText()
+    description = GetQuestText()
+    objective = GetObjectiveText()
+  end
+
+  local text = ""
+
+  if settings.readTitle.get() then
+    text = text .. "\n" .. title
+  end
+
+  text = text .. "\n" .. description
+
+  if settings.readObjective.get() then
+    text = text .. "\n" .. objective
+  end
+
+  text = text .. "\n" .. info
+  text = text .. "\n" .. reward
+  text = text .. "\n" .. progress
+
+  C_VoiceChat.SpeakText(
+    module.getVoice().voiceID, module.cleanText(text),
+    Enum.VoiceTtsDestination.LocalPlayback, settings.voiceSpeed.get(),
+    settings.voiceVolume.get()
   )
+
+  isPlaying.set(true)
+end
+
+function module.ttsStop()
+  C_VoiceChat.StopSpeakingText()
+end
+
+function module.guessSource(source)
+  local toRet = source
+
+  if source == nil and QuestFrame:IsShown() then
+    toRet = "quest"
+  elseif source == nil and GossipFrame:IsShown() then
+    toRet = "gossip"
+  elseif source == nil and ItemTextFrame:IsShown() then
+    toRet = "book"
+  end
+
+  if source == "immersion" and module.immersionIsGossip() then
+    toRet = module.immersionGuessSource()
+  elseif source == "quest" and QuestFrameProgressPanel:IsShown() then
+    toRet = "quest:progress"
+  elseif source == "quest" and QuestFrameRewardPanel:IsShown() then
+    toRet = "quest:reward"
+  elseif source == "quest" then
+    toRet = "quest:detail"
+  elseif source == "book" then
+    toRet = "book:" .. ItemTextGetPage()
+  end
+
+  return toRet
+end
+
+function module.immersionGuessSource()
+  local toRet = nil
+
+  local icon = ImmersionFrame.TalkBox.MainFrame.Indicator:GetTextureFilePath()
+  local isGossip = icon:find("GossipGossipIcon")
+  local isQuestProgress = icon:find("IncompleteQuestIcon")
+  local isQuestReward = icon:find("ActiveQuestIcon")
+  local isQuestDetail = icon:find("AvailableQuestIcon")
+
+  if isGossip then
+    toRet = "gossip"
+  elseif isQuestProgress then
+    toRet = "quest:progress"
+  elseif isQuestReward then
+    toRet = "quest:reward"
+  elseif isQuestDetail then
+    toRet = "quest:detail"
+  end
+
+  return toRet
 end
 
 function module.getVoice()
@@ -293,21 +303,21 @@ function module.initPlayButton(onLeftClick, onRightClick)
 
   if Addon.isRetail then
     buttons:push(factory(QuestMapFrame.DetailsFrame, 18, 30, "quest:focused"))
-    buttons:push(factory(QuestFrame, -10, -30))
-    buttons:push(factory(GossipFrame, -10, -30))
-    buttons:push(factory(ItemTextFrame, -23, 0))
+    buttons:push(factory(QuestFrame, -10, -30, "quest"))
+    buttons:push(factory(GossipFrame, -10, -30, "gossip"))
+    buttons:push(factory(ItemTextFrame, -23, 0, "book"))
   elseif Addon.isWOTLK then
-    buttons:push(factory(QuestFrame, -54, -20))
+    buttons:push(factory(QuestFrame, -54, -20, "quest"))
     buttons:push(factory(QuestLogFrame, -24, -13, "quest:focused"))
     buttons:push(factory(QuestLogDetailFrame, -24, -13, "quest:focused"))
-    buttons:push(factory(GossipFrame, -54, -20))
-    buttons:push(factory(ItemTextFrame, -55, -14))
+    buttons:push(factory(GossipFrame, -54, -20, "gossip"))
+    buttons:push(factory(ItemTextFrame, -55, -14, "book"))
   end
 
   local immersionFrame = module.immersionGetFrame()
 
   if immersionFrame then
-    buttons:push(factory(immersionFrame, -59, -17))
+    buttons:push(factory(immersionFrame, -59, -17, "immersion"))
   end
 
   useEffect(
