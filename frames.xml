@@ -4,7 +4,7 @@
     <Size y="190"/>
     <Frames>
       <Frame name="$parentSpam">
-        <Size x="300" y="130"/>
+        <Size x="350" y="190"/>
         <Anchors>
           <Anchor point="BOTTOMLEFT" x="0" y="0"/>
         </Anchors>
@@ -14,36 +14,39 @@
               inherits="GameFontNormal"
               justifyH="LEFT"
               justifyV="BOTTOM"
-              parentKey="Line1"
               text="Hello friend! I recently started a Twitch channel, I stream mostly WoW, Overwatch and programming tutorials (including WoW addons!)."
+              wordwrap="true"
             >
+              <Size y="50"/>
               <Anchors>
                 <Anchor point="TOPLEFT" x="0" y="0"/>
-                <Anchor point="TOPRIGHT" x="0" y="0"/>
+                <Anchor point="BOTTOMRIGHT" x="0" y="90"/>
               </Anchors>
             </FontString>
             <FontString
               inherits="GameFontNormal"
               justifyH="LEFT"
               justifyV="BOTTOM"
-              parentKey="Line2"
               text="The stream is in italian but if you can leave a follow to support the channel it would be fantastic."
+              wordwrap="true"
             >
+              <Size y="50"/>
               <Anchors>
-                <Anchor point="TOPLEFT" x="0" y="-55"/>
-                <Anchor point="TOPRIGHT" x="0" y="0"/>
+                <Anchor point="TOPLEFT" x="0" y="0"/>
+                <Anchor point="BOTTOMRIGHT" x="0" y="50"/>
               </Anchors>
             </FontString>
             <FontString
               inherits="GameFontNormal"
               justifyH="LEFT"
               justifyV="BOTTOM"
-              parentKey="Line2"
               text="If you find any bug or you have an idea to improve the addon leave a comment on Curse or open an issue on GitHub, thank you :)"
+              wordwrap="true"
             >
+              <Size y="50"/>
               <Anchors>
-                <Anchor point="TOPLEFT" x="0" y="-100"/>
-                <Anchor point="TOPRIGHT" x="0" y="0"/>
+                <Anchor point="TOPLEFT" x="0" y="0"/>
+                <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
               </Anchors>
             </FontString>
           </Layer>
