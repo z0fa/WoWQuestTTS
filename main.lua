@@ -269,7 +269,7 @@ function module.openSettings()
   InterfaceOptionsFrame_OpenToCategory(__namespace)
 end
 
-function isQuestFrameShown()
+function module.isQuestFrameShown()
   local toRet = false
 
   if QuestFrame:IsShown() then
@@ -334,6 +334,7 @@ function module.initPlayButton(onLeftClick, onRightClick)
     toRet:SetPoint("TOPRIGHT", x, y)
     toRet:SetWidth(22)
     toRet:SetHeight(22)
+    toRet:SetFrameStrata("HIGH")
     toRet:RegisterForClicks("LeftButtonUp", "RightButtonDown")
     toRet:SetScript(
       "OnClick", function(_, event)
@@ -352,9 +353,9 @@ function module.initPlayButton(onLeftClick, onRightClick)
 
   if Addon.isRetail then
     buttons:push(factory(QuestMapFrame.DetailsFrame, 18, 30, "quest:focused"))
-    buttons:push(factory(QuestFrame, -10, -30, "quest"))
-    buttons:push(factory(GossipFrame, -10, -30, "gossip"))
-    buttons:push(factory(ItemTextFrame, -23, 0, "book"))
+    buttons:push(factory(QuestFrame, -20, 0, "quest"))
+    buttons:push(factory(GossipFrame, -20, 0, "gossip"))
+    buttons:push(factory(ItemTextFrame, -20, 0, "book"))
   elseif Addon.isWOTLK then
     buttons:push(factory(QuestFrame, -54, -20, "quest"))
     buttons:push(factory(QuestLogFrame, -24, -13, "quest:focused"))
