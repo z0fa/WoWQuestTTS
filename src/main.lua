@@ -93,12 +93,12 @@ useHook(
 )
 useHook(
   "OnShow", function()
-    module.ttsAutoPlay("quest:complete")
+    module.ttsAutoPlay("quest:progress")
   end, "secure-widget", QuestFrameProgressPanel
 )
 useHook(
   "OnShow", function()
-    module.ttsAutoPlay("quest:progress")
+    module.ttsAutoPlay("quest:complete")
   end, "secure-widget", QuestFrameRewardPanel
 )
 useHook(
