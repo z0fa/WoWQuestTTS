@@ -11,9 +11,7 @@ local useEffect = Addon.useEffect
 local useEvent = Addon.useEvent
 local useSlashCmd = Addon.useSlashCmd
 local useHook = Addon.useHook
--- local useDebugValue = Addon.useDebugValue
 local print = Addon.print
-local nextTick = Addon.nextTick
 
 local module = {}
 
@@ -36,6 +34,20 @@ onInit(
 onLoad(
   function()
     module.initPlayButton(module.ttsToggle, module.openSettings)
+
+    if Immersion.getFrame() then
+      Immersion.setPlayCallback(
+        function()
+          module.ttsAutoPlay("immersion")
+        end
+      )
+
+      Immersion.setStopCallback(
+        function()
+          module.ttsStop()
+        end
+      )
+    end
 
     if (alertVersion > settings.alert.get()) then
       print(

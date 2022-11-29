@@ -260,10 +260,8 @@ function module.useHook(fnName, fn, hookType, srcTable, once)
           return enabled
         elseif k == "__oldFn" then
           return oldFn
-        elseif k == "__oldFnSelf" then
-          return function(...)
-            oldFn(srcTable, ...)
-          end
+        elseif k == "__srcTable" then
+          return srcTable
         elseif type(srcTable[k]) == "function" then
           return function(_, ...)
             return srcTable[k](srcTable, ...)
