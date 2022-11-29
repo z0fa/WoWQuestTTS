@@ -3,8 +3,8 @@ local __namespace, __module = ...
 local Addon = __module.Addon --- @class Addon
 local Main = __module.Main --- @class Addon
 
-local useHook = Addon.useHook
 local onLoad = Addon.onLoad
+local useHook = Addon.useHook
 
 local module = {}
 
@@ -21,19 +21,13 @@ end
 function module.guessSource()
   local toRet = nil
 
-  local icon = npcSource
-  local isGossip = icon:find("GossipGossip")
-  local isQuestProgress = icon:find("IncompleteQuest")
-  local isQuestReward = icon:find("ActiveQuest")
-  local isQuestDetail = icon:find("AvailableQuest")
-
-  if isGossip then
+  if npcSource:find("GossipGossip") then
     toRet = "gossip"
-  elseif isQuestProgress then
+  elseif npcSource:find("IncompleteQuest") then
     toRet = "quest:progress"
-  elseif isQuestReward then
+  elseif npcSource:find("ActiveQuest") then
     toRet = "quest:reward"
-  elseif isQuestDetail then
+  elseif npcSource:find("AvailableQuest") then
     toRet = "quest:detail"
   end
 
@@ -58,7 +52,10 @@ onLoad(
       "UpdateTalkingHead",
       function(self, frame, title, text, npcType, explicitUnit, isToastPlayback)
         npcSource = npcType
-        playCallback()
+
+        if not npcType:find("GossipGossip") then
+          playCallback()
+        end
 
         return self.__oldFn(
           frame, title, text, npcType, explicitUnit, isToastPlayback
