@@ -43,7 +43,7 @@ onLoad(
     if Immersion.getFrame() then
       Immersion.setPlayCallback(
         function()
-          module.ttsAutoPlay("immersion")
+          module.ttsAutoPlay(module.guessSource("immersion"))
         end
       )
 
@@ -78,17 +78,6 @@ useHook(
   "OnHide", function()
     module.ttsStop()
   end, "secure-widget", GossipFrame
-)
-
-useHook(
-  "OnShow", function()
-    -- module.ttsAutoPlay("book")
-  end, "secure-widget", ItemTextFrame
-)
-useHook(
-  "OnHide", function()
-    -- module.ttsStop()
-  end, "secure-widget", ItemTextFrame
 )
 
 useHook(
