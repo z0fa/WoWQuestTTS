@@ -2,6 +2,7 @@ local __namespace, __module = ...
 
 local Array = __module.Array --- @class Array
 local Addon = __module.Addon --- @class Addon
+local Immersion = __module.Immersion
 
 local onInit = Addon.onInit
 local onLoad = Addon.onLoad
@@ -9,8 +10,8 @@ local useState = Addon.useState
 local useEffect = Addon.useEffect
 local useEvent = Addon.useEvent
 local useSlashCmd = Addon.useSlashCmd
+local useHook = Addon.useHook
 -- local useDebugValue = Addon.useDebugValue
-local useSavedVariable = Addon.useSavedVariable
 local print = Addon.print
 local nextTick = Addon.nextTick
 
@@ -50,41 +51,48 @@ useEvent(
     isPlaying.set(false)
   end, { "VOICE_CHAT_TTS_PLAYBACK_FINISHED", "VOICE_CHAT_TTS_PLAYBACK_FAILED" }
 )
-useEvent(
-  function()
-    module.ttsStop()
-  end, { "ITEM_TEXT_CLOSED" }
+
+useHook(
+  "OnShow", function()
+    module.ttsAutoPlay("gossip")
+  end, "secure-widget", GossipFrame
 )
-useEvent(
-  function()
+useHook(
+  "OnHide", function()
     module.ttsStop()
-  end, { "GOSSIP_CLOSED" }
-)
-useEvent(
-  function()
-    module.ttsStop()
-  end, { "QUEST_FINISHED" }
+  end, "secure-widget", GossipFrame
 )
 
-useEvent(
-  function()
-    module.ttsAutoPlay("gossip")
-  end, { "GOSSIP_SHOW" }
+useHook(
+  "OnShow", function()
+    -- module.ttsAutoPlay("book")
+  end, "secure-widget", ItemTextFrame
 )
-useEvent(
-  function()
+useHook(
+  "OnHide", function()
+    -- module.ttsStop()
+  end, "secure-widget", ItemTextFrame
+)
+
+useHook(
+  "OnShow", function()
     module.ttsAutoPlay("quest:detail")
-  end, { "QUEST_DETAIL" }
+  end, "secure-widget", QuestFrameDetailPanel
 )
-useEvent(
-  function()
-    module.ttsAutoPlay("quest:progress")
-  end, { "QUEST_PROGRESS" }
-)
-useEvent(
-  function()
+useHook(
+  "OnShow", function()
     module.ttsAutoPlay("quest:complete")
-  end, { "QUEST_COMPLETE" }
+  end, "secure-widget", QuestFrameProgressPanel
+)
+useHook(
+  "OnShow", function()
+    module.ttsAutoPlay("quest:progress")
+  end, "secure-widget", QuestFrameRewardPanel
+)
+useHook(
+  "OnHide", function()
+    module.ttsStop()
+  end, "secure-widget", QuestFrame
 )
 
 useSlashCmd(
@@ -108,7 +116,17 @@ function module.ttsAutoPlay(source)
     return
   end
 
-  module.ttsPlay(source)
+  C_Timer.After(
+    0, function()
+      module.ttsStop()
+    end
+  )
+
+  C_Timer.After(
+    0.1, function()
+      module.ttsPlay(source)
+    end
+  )
 end
 
 function module.ttsToggle(source)
@@ -193,8 +211,8 @@ function module.guessSource(source)
 
   source = toRet
 
-  if source == "immersion" and module.immersionIsGossip() then
-    toRet = module.immersionGuessSource()
+  if source == "immersion" then
+    toRet = Immersion.guessSource()
   elseif source == "quest" and QuestFrameProgressPanel:IsShown() then
     toRet = "quest:progress"
   elseif source == "quest" and QuestFrameRewardPanel:IsShown() then
@@ -205,28 +223,6 @@ function module.guessSource(source)
     toRet = "quest:focused"
   elseif source == "book" then
     toRet = "book:" .. ItemTextGetPage()
-  end
-
-  return toRet
-end
-
-function module.immersionGuessSource()
-  local toRet = nil
-
-  local icon = ImmersionFrame.TalkBox.MainFrame.Indicator:GetTextureFilePath()
-  local isGossip = icon:find("GossipGossipIcon")
-  local isQuestProgress = icon:find("IncompleteQuestIcon")
-  local isQuestReward = icon:find("ActiveQuestIcon")
-  local isQuestDetail = icon:find("AvailableQuestIcon")
-
-  if isGossip then
-    toRet = "gossip"
-  elseif isQuestProgress then
-    toRet = "quest:progress"
-  elseif isQuestReward then
-    toRet = "quest:reward"
-  elseif isQuestDetail then
-    toRet = "quest:detail"
   end
 
   return toRet
@@ -319,10 +315,6 @@ function module.getQuestLogTitle()
   return toRet
 end
 
-function module.immersionGetFrame()
-  return ((ImmersionFrame or {}).TalkBox or {}).MainFrame
-end
-
 function module.initPlayButton(onLeftClick, onRightClick)
   local function factory(parent, x, y, source)
     local toRet = CreateFrame("Button", nil, parent)
@@ -364,7 +356,7 @@ function module.initPlayButton(onLeftClick, onRightClick)
     buttons:push(factory(ItemTextFrame, -55, -14, "book"))
   end
 
-  local immersionFrame = module.immersionGetFrame()
+  local immersionFrame = Immersion.getFrame()
 
   if immersionFrame then
     buttons:push(factory(immersionFrame, -59, -17, "immersion"))

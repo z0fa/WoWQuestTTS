@@ -222,6 +222,90 @@ function module.useSlashCmd(fn, aliases)
 end
 
 --- comment
+--- @param fnName string
+--- @param fn function
+--- @param hookType? "function" | "secure-function" | "widget" | "secure-widget"
+--- @param srcTable? table
+--- @param once? boolean
+function module.useHook(fnName, fn, hookType, srcTable, once)
+  hookType = hookType or "function"
+  srcTable = srcTable or _G
+
+  local unhook = nil
+
+  local enabled = true
+  local oldFn = nil
+  local hookProxy = {}
+  local hookFn = function(...)
+    if once then
+      unhook()
+    end
+
+    return hookProxy(...)
+  end
+
+  setmetatable(
+    hookProxy, {
+      __call = function(...)
+        if not enabled and oldFn then
+          return oldFn(...)
+        elseif not enabled then
+          return
+        end
+
+        return fn(...)
+      end,
+      __index = function(t, k)
+        if k == "__enabled" then
+          return enabled
+        elseif k == "__oldFn" then
+          return oldFn
+        elseif k == "__oldFnSelf" then
+          return function(...)
+            oldFn(srcTable, ...)
+          end
+        elseif type(srcTable[k]) == "function" then
+          return function(_, ...)
+            return srcTable[k](srcTable, ...)
+          end
+        else
+          return srcTable[k]
+        end
+      end,
+      __newindex = function(t, k, v)
+        if k == "__enabled" then
+          enabled = v
+        elseif k == "__oldFn" then
+          oldFn = v
+        else
+          srcTable[k] = v
+        end
+      end,
+    }
+  )
+
+  unhook = function()
+    enabled = false
+  end
+
+  if hookType == "function" then
+    oldFn = srcTable[fnName]
+    srcTable[fnName] = hookFn
+  elseif hookType == "secure-function" and srcTable then
+    hooksecurefunc(srcTable, fnName, hookFn)
+  elseif hookType == "secure-function" then
+    hooksecurefunc(fnName, hookFn)
+  elseif hookType == "widget" then
+    oldFn = srcTable:GetScript(fnName)
+    srcTable:SetScript(fnName, hookFn)
+  elseif hookType == "secure-widget" then
+    srcTable:HookScript(fnName, hookFn)
+  end
+
+  return unhook
+end
+
+--- comment
 --- @param label string
 --- @param dep ReactiveData[]
 function module.useDebugValue(label, dep)

@@ -8,10 +8,11 @@
 ## X-Wago-ID: 7nGv2eGx
 ## X-Curse-Project-ID: 504658
 
-frames.xml
-
 libs/array.lua
 libs/addon.lua
 
-settings.lua
-main.lua
+src/settings.lua
+src/immersion.lua
+src/autoturnin.lua
+src/main.lua
+src/frames.xml
