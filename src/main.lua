@@ -3,6 +3,7 @@ local __namespace, __module = ...
 local Array = __module.Array --- @class Array
 local Addon = __module.Addon --- @class Addon
 local Immersion = __module.Immersion
+local AutoTurnIn = __module.AutoTurnIn
 
 local onInit = Addon.onInit
 local onLoad = Addon.onLoad
@@ -11,6 +12,7 @@ local useEffect = Addon.useEffect
 local useEvent = Addon.useEvent
 local useSlashCmd = Addon.useSlashCmd
 local useHook = Addon.useHook
+local nextTick = Addon.nextTick
 local print = Addon.print
 
 local module = {}
@@ -27,6 +29,9 @@ onInit(
 
     QuestTTSAddon.keybindReadQuest = function(...)
       module.ttsToggle()
+    end
+    QuestTTSAddon.autoTurnInContinue = function()
+      AutoTurnIn.continue()
     end
   end
 )
@@ -128,16 +133,16 @@ function module.ttsAutoPlay(source)
     return
   end
 
-  C_Timer.After(
-    0, function()
+  nextTick(
+    function()
       module.ttsStop()
-    end
+    end, 0
   )
 
-  C_Timer.After(
-    0.1, function()
+  nextTick(
+    function()
       module.ttsPlay(source)
-    end
+    end, 0.1
   )
 end
 
