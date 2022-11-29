@@ -2,4 +2,7 @@
   <Binding name="QuestTTS start/stop reading" category="BINDING_HEADER_OTHER">
     QuestTTSAddon.keybindReadQuest()
   </Binding>
+  <Binding name="QuestTTS AutoTurnIn continue" category="BINDING_HEADER_OTHER">
+    QuestTTSAddon.autoTurnInContinue()
+  </Binding>
 </Bindings>
