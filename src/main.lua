@@ -98,7 +98,7 @@ useHook(
 )
 useHook(
   "OnShow", function()
-    module.ttsAutoPlay("quest:complete")
+    module.ttsAutoPlay("quest:reward")
   end, "secure-widget", QuestFrameRewardPanel
 )
 useHook(
