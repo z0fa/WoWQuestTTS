@@ -2,42 +2,54 @@ local __namespace, __module = ...
 
 local Addon = __module.Addon --- @class Addon
 
-local onLoad = Addon.onLoad
+local useEffect = Addon.useEffect
 local useHook = Addon.useHook
-local useEvent = Addon.useEvent
+local onLoad = Addon.onLoad
 
 local module = {}
-
 local hook = false
-local nop = function()
-end
-local nextAction = nop
 
-function module.getFrame()
-  return AutoTurnIn
-end
+function module.init()
+  local Main = __module.Main
+  local isPlaying = Main.getState().isPlaying
 
-function module.continue()
-  nextAction()
-  nextAction = nop
+  local frame = AutoTurnIn
+  local nop = function()
+  end
+  local nextAction = nop
+
+  if not frame or not hook then
+    return
+  end
+
+  local function deferAction(self, ...)
+    local args = { ... }
+
+    nextAction = function()
+      self.__oldFn(self.__srcTable, unpack(args))
+    end
+  end
+
+  useHook("QUEST_GREETING", deferAction, "function", frame)
+  useHook("GOSSIP_SHOW", deferAction, "function", frame)
+  useHook("QUEST_DETAIL", deferAction, "function", frame)
+  useHook("GOSSIP_SHOW", deferAction, "function", frame)
+
+  useEffect(
+    function()
+      if isPlaying.get() then
+        return
+      end
+
+      nextAction()
+      nextAction = nop
+    end, { isPlaying }
+  )
 end
 
 onLoad(
   function()
-    if not module.getFrame() or not hook then
-      return
-    end
-
-    useHook(
-      "QUEST_DETAIL", function(self, ...)
-        local args = { ... }
-
-        nextAction = function()
-          self.__oldFn(self.__srcTable, unpack(args))
-        end
-      end, "function", AutoTurnIn
-    )
-
+    module.init()
   end
 )
 

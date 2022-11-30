@@ -457,4 +457,4 @@ onLoad(
   end
 )
 
-__module.settings = module
+__module.Settings = module

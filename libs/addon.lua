@@ -316,10 +316,8 @@ end
 
 --- comment
 --- @param fn function
---- @param deltaTime? number
-function module.nextTick(fn, deltaTime)
-  deltaTime = deltaTime or 0
-  C_Timer.After(deltaTime, fn)
+function module.nextTick(fn)
+  C_Timer.After(0, fn)
 end
 
 --- comment

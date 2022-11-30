@@ -2,8 +2,7 @@ local __namespace, __module = ...
 
 local Array = __module.Array --- @class Array
 local Addon = __module.Addon --- @class Addon
-local Immersion = __module.Immersion
-local AutoTurnIn = __module.AutoTurnIn
+local Settings = __module.Settings
 
 local onInit = Addon.onInit
 local onLoad = Addon.onLoad
@@ -12,15 +11,12 @@ local useEffect = Addon.useEffect
 local useEvent = Addon.useEvent
 local useSlashCmd = Addon.useSlashCmd
 local useHook = Addon.useHook
-local nextTick = Addon.nextTick
 local print = Addon.print
 
 local module = {}
 
 local isPlaying = useState(false)
-
 local alertVersion = 1
-local settings = __module.settings
 
 onInit(
   function()
@@ -30,9 +26,6 @@ onInit(
     QuestTTSAddon.keybindReadQuest = function(...)
       module.ttsToggle()
     end
-    QuestTTSAddon.autoTurnInContinue = function()
-      AutoTurnIn.continue()
-    end
   end
 )
 
@@ -40,25 +33,12 @@ onLoad(
   function()
     module.initPlayButton(module.ttsToggle, module.openSettings)
 
-    if Immersion.getFrame() then
-      Immersion.setPlayCallback(
-        function()
-          module.ttsAutoPlay(module.guessSource("immersion"))
-        end
-      )
-
-      Immersion.setStopCallback(
-        function()
-          module.ttsStop()
-        end
-      )
-    end
-
-    if (alertVersion > settings.alert.get()) then
+    if (alertVersion > Settings.alert.get()) then
       print(
         "Hello! I have a brand new settings panel, check it out from the interface menu or by right cliking the play/stop button :D"
       )
-      settings.alert.set(alertVersion)
+
+      Settings.alert.set(alertVersion)
     end
   end
 )
@@ -116,22 +96,20 @@ useSlashCmd(
 )
 
 function module.ttsAutoPlay(source)
-  if source:find("quest") and not settings.autoReadQuest.get() then
+  if source:find("quest") and not Settings.autoReadQuest.get() then
     return
-  elseif source:find("gossip") and not settings.autoReadGossip.get() then
+  elseif source:find("gossip") and not Settings.autoReadGossip.get() then
     return
   end
 
-  nextTick(
-    function()
-      module.ttsStop()
-    end, 0
-  )
+  if isPlaying.get() then
+    module.ttsStop()
+  end
 
-  nextTick(
-    function()
+  C_Timer.After(
+    0.1, function()
       module.ttsPlay(source)
-    end, 0.1
+    end
   )
 end
 
@@ -177,13 +155,13 @@ function module.ttsPlay(source)
 
   local text = ""
 
-  if settings.readTitle.get() then
+  if Settings.readTitle.get() then
     text = text .. "\n" .. title
   end
 
   text = text .. "\n" .. description
 
-  if settings.readObjective.get() then
+  if Settings.readObjective.get() then
     text = text .. "\n" .. objective
   end
 
@@ -193,8 +171,8 @@ function module.ttsPlay(source)
 
   C_VoiceChat.SpeakText(
     module.getVoice().voiceID, module.cleanText(text),
-    Enum.VoiceTtsDestination.LocalPlayback, settings.voiceSpeed.get(),
-    settings.voiceVolume.get()
+    Enum.VoiceTtsDestination.LocalPlayback, Settings.voiceSpeed.get(),
+    Settings.voiceVolume.get()
   )
 
   isPlaying.set(true)
@@ -217,9 +195,7 @@ function module.guessSource(source)
 
   source = toRet
 
-  if source == "immersion" then
-    toRet = Immersion.guessSource()
-  elseif source == "quest" and QuestFrameProgressPanel:IsShown() then
+  if source == "quest" and QuestFrameProgressPanel:IsShown() then
     toRet = "quest:progress"
   elseif source == "quest" and QuestFrameRewardPanel:IsShown() then
     toRet = "quest:reward"
@@ -235,15 +211,15 @@ function module.guessSource(source)
 end
 
 function module.getVoice()
-  local toRet = settings.voice1.get()
+  local toRet = Settings.voice1.get()
   local unitSex = UnitSex("questnpc") or UnitSex("npc")
 
   if unitSex == 2 then -- male
-    toRet = settings.voice1.get()
+    toRet = Settings.voice1.get()
   elseif unitSex == 3 then -- female
-    toRet = settings.voice2.get()
+    toRet = Settings.voice2.get()
   else
-    toRet = settings.voice3.get()
+    toRet = Settings.voice3.get()
   end
 
   local voices = Array.new(C_VoiceChat.GetTtsVoices())
@@ -267,7 +243,6 @@ function module.cleanText(text)
 end
 
 function module.openSettings()
-  InterfaceOptionsFrame_OpenToCategory(__namespace)
   InterfaceOptionsFrame_OpenToCategory(__namespace)
 end
 
@@ -362,12 +337,6 @@ function module.initPlayButton(onLeftClick, onRightClick)
     buttons:push(factory(ItemTextFrame, -55, -14, "book"))
   end
 
-  local immersionFrame = Immersion.getFrame()
-
-  if immersionFrame then
-    buttons:push(factory(immersionFrame, -59, -17, "immersion"))
-  end
-
   useEffect(
     function()
       if isPlaying.get() then
@@ -388,3 +357,9 @@ function module.initPlayButton(onLeftClick, onRightClick)
     end, { isPlaying }
   )
 end
+
+function module.getState()
+  return { isPlaying = isPlaying }
+end
+
+__module.Main = module
