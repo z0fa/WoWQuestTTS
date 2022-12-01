@@ -67,11 +67,7 @@ function module.init()
       if not npcType:find("GossipGossip") then
         Main.ttsAutoPlay(source)
       end
-
-      return self.__oldFn(
-        frame, title, text, npcType, explicitUnit, isToastPlayback
-      )
-    end, "function", ImmersionFrame
+    end, "secure-function", ImmersionFrame
   )
 
   useHook(

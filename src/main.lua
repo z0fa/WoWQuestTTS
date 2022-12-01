@@ -50,9 +50,9 @@ useEvent(
 )
 
 useHook(
-  "OnShow", function()
+  "Update", function()
     module.ttsAutoPlay("gossip")
-  end, "secure-widget", GossipFrame
+  end, "secure-function", GossipFrame
 )
 useHook(
   "OnHide", function()
@@ -61,19 +61,15 @@ useHook(
 )
 
 useHook(
-  "OnShow", function()
-    module.ttsAutoPlay("quest:detail")
-  end, "secure-widget", QuestFrameDetailPanel
-)
-useHook(
-  "OnShow", function()
-    module.ttsAutoPlay("quest:progress")
-  end, "secure-widget", QuestFrameProgressPanel
-)
-useHook(
-  "OnShow", function()
-    module.ttsAutoPlay("quest:reward")
-  end, "secure-widget", QuestFrameRewardPanel
+  "OnEvent", function(self, frame, event)
+    if event == "QUEST_DETAIL" then
+      module.ttsAutoPlay("quest:detail")
+    elseif event == "QUEST_PROGRESS" then
+      module.ttsAutoPlay("quest:progress")
+    elseif event == "QUEST_COMPLETE" then
+      module.ttsAutoPlay("quest:reward")
+    end
+  end, "secure-widget", QuestFrame
 )
 useHook(
   "OnHide", function()
