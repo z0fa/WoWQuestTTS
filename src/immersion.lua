@@ -56,6 +56,8 @@ function module.init()
     function(self, frame, title, text, npcType, explicitUnit, isToastPlayback)
       if npcType:find("GossipGossip") then
         source = "gossip"
+      elseif npcType:find("AvailableQuest") and GetGreetingText() ~= "" then
+        source = "quest:greeting"
       elseif npcType:find("IncompleteQuest") then
         source = "quest:progress"
       elseif npcType:find("ActiveQuest") then

@@ -16,6 +16,8 @@ local print = Addon.print
 local module = {}
 
 local isPlaying = useState(false)
+
+local playHistory = Array.new()
 local alertVersion = 1
 
 onInit(
@@ -50,7 +52,11 @@ useEvent(
 )
 
 useHook(
-  "Update", function()
+  "Update", function(self, frame)
+    if not frame:IsShown() then
+      return
+    end
+
     module.ttsAutoPlay("gossip")
   end, "secure-function", GossipFrame
 )
@@ -62,7 +68,13 @@ useHook(
 
 useHook(
   "OnEvent", function(self, frame, event)
-    if event == "QUEST_DETAIL" then
+    if not frame:IsShown() then
+      return
+    end
+
+    if event == "QUEST_GREETING" then
+      module.ttsAutoPlay("quest:greeting")
+    elseif event == "QUEST_DETAIL" then
       module.ttsAutoPlay("quest:detail")
     elseif event == "QUEST_PROGRESS" then
       module.ttsAutoPlay("quest:progress")
@@ -102,9 +114,24 @@ function module.ttsAutoPlay(source)
     module.ttsStop()
   end
 
+  local text = module.getText(source)
+
+  local isRecentText = playHistory:some(
+    function(element, index, array)
+      return element == text
+    end
+  )
+
+  playHistory:unshift(text)
+  playHistory = playHistory:slice(1, 10)
+
+  if isRecentText then
+    return
+  end
+
   C_Timer.After(
     0.1, function()
-      module.ttsPlay(source)
+      module.ttsPlay(text)
     end
   )
 end
@@ -113,11 +140,11 @@ function module.ttsToggle(source)
   if isPlaying.get() then
     module.ttsStop()
   else
-    module.ttsPlay(source)
+    module.ttsPlay(module.getText(source))
   end
 end
 
-function module.ttsPlay(source)
+function module.getText(source)
   local title = ""
   local description = ""
   local objective = ""
@@ -127,26 +154,29 @@ function module.ttsPlay(source)
 
   source = module.guessSource(source)
 
-  if source == "quest:focused" then
+  if source == "gossip" then
+    info = module.getGossipText()
+  elseif source == "quest:focused" then
     title = module.getQuestLogTitle()
     description, objective = GetQuestLogQuestText()
-  elseif source == "gossip" then
-    info = module.getGossipText()
+  elseif source == "quest:greeting" then
+    -- title = GetTitleText()
+    description = GetGreetingText()
+  elseif source == "quest:detail" then
+    title = GetTitleText()
+    description = GetQuestText()
+    objective = GetObjectiveText()
+  elseif source == "quest:progress" then
+    -- title = GetTitleText()
+    progress = GetProgressText()
+  elseif source == "quest:reward" then
+    -- title = GetTitleText()
+    reward = GetRewardText()
   elseif source == "book:1" then
     title = ItemTextGetItem()
     description = ItemTextGetText()
   elseif source and source:find("^book:") then
     description = ItemTextGetText()
-  elseif source == "quest:reward" then
-    -- title = GetTitleText()
-    reward = GetRewardText()
-  elseif source == "quest:progress" then
-    -- title = GetTitleText()
-    progress = GetProgressText()
-  elseif source == "quest:detail" then
-    title = GetTitleText()
-    description = GetQuestText()
-    objective = GetObjectiveText()
   end
 
   local text = ""
@@ -165,13 +195,18 @@ function module.ttsPlay(source)
   text = text .. "\n" .. reward
   text = text .. "\n" .. progress
 
-  C_VoiceChat.SpeakText(
-    module.getVoice().voiceID, module.cleanText(text),
-    Enum.VoiceTtsDestination.LocalPlayback, Settings.voiceSpeed.get(),
-    Settings.voiceVolume.get()
-  )
+  text = text:gsub("<", ""):gsub(">", "")
 
+  return text
+end
+
+function module.ttsPlay(text)
   isPlaying.set(true)
+
+  C_VoiceChat.SpeakText(
+    module.getVoice().voiceID, text, Enum.VoiceTtsDestination.LocalPlayback,
+    Settings.voiceSpeed.get(), Settings.voiceVolume.get()
+  )
 end
 
 function module.ttsStop()
@@ -191,7 +226,9 @@ function module.guessSource(source)
 
   source = toRet
 
-  if source == "quest" and QuestFrameProgressPanel:IsShown() then
+  if source == "quest" and QuestFrameGreetingPanel:IsShown() then
+    toRet = "quest:greeting"
+  elseif source == "quest" and QuestFrameProgressPanel:IsShown() then
     toRet = "quest:progress"
   elseif source == "quest" and QuestFrameRewardPanel:IsShown() then
     toRet = "quest:reward"
@@ -228,14 +265,6 @@ function module.getVoice()
   )
 
   return voiceToRet
-end
-
-function module.cleanText(text)
-  local toRet = text
-
-  toRet = toRet:gsub("<", ""):gsub(">", "")
-
-  return toRet
 end
 
 function module.openSettings()
