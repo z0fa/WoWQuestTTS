@@ -94,7 +94,17 @@ end
 function module:entries()
 end
 
-function module:every()
+--- comment
+--- @param callbackFn fun(element: unknown, index: integer, array: Array): boolean
+--- @return boolean
+function module:every(callbackFn)
+  for i, v in ipairs(self) do
+    if not callbackFn(v, i, self) then
+      return false
+    end
+  end
+
+  return true
 end
 
 function module:fill()
@@ -187,6 +197,7 @@ function module:map(callbackFn)
 end
 
 function module:pop()
+  return table.remove(self)
 end
 
 --- comment
@@ -222,12 +233,37 @@ function module:reverse()
 end
 
 function module:shift()
+  return table.remove(self, 1)
 end
 
-function module:slice()
+---comment
+---@param from? number
+---@param to? number
+---@return Array
+function module:slice(from, to)
+  from = from or 0
+  to = to or #self
+
+  local toRet = module.new()
+
+  for i = from, to, 1 do
+    toRet:push(self[i])
+  end
+
+  return toRet
 end
 
-function module:some()
+--- comment
+--- @param callbackFn fun(element: unknown, index: integer, array: Array): boolean
+--- @return boolean
+function module:some(callbackFn)
+  for i, v in ipairs(self) do
+    if callbackFn(v, i, self) then
+      return true
+    end
+  end
+
+  return false
 end
 
 function module:sort()
@@ -242,7 +278,14 @@ end
 function module:toString()
 end
 
-function module:unshift()
+--- comment
+--- @param ... any
+function module:unshift(...)
+  for i, v in ipairs({ ... }) do
+    table.insert(self, 1, v)
+  end
+
+  return #self
 end
 
 function module:values()
