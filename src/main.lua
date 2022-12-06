@@ -51,13 +51,13 @@ useEvent(
 )
 
 useHook(
-  "Update", function(self, frame)
+  "OnEvent", function(self, frame)
     if not frame:IsShown() then
       return
     end
 
     module.ttsAutoPlay("gossip")
-  end, "secure-function", GossipFrame
+  end, "secure-widget", GossipFrame
 )
 useHook(
   "OnHide", function()
