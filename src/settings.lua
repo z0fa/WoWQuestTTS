@@ -114,7 +114,7 @@ local function proxyLegacyVoiceSetting(setting, frame)
 
   onLoad(updateOption)
 
-  UIDropDownMenu_SetWidth(frame, 350)
+  UIDropDownMenu_SetWidth(frame, 150)
 
   UIDropDownMenu_Initialize(
     frame, function(_, level, menuList)
@@ -347,6 +347,21 @@ local function initLegacySettings()
   readObjectiveText:SetPoint("LEFT", readObjective, "RIGHT", 2, 1)
   proxyLegacyCheckSetting(module.readObjective, readObjective)
 
+  local skipRecentText = CreateFrame(
+    "CheckButton", "QuestTTSOptionsPanelSkipRecentText", frame,
+    "OptionsBaseCheckButtonTemplate"
+  )
+  skipRecentText:SetPoint(
+    "TOPLEFT", "QuestTTSOptionsPanelReadObjective", "BOTTOMLEFT", 0, -8
+  )
+  local skipRecentTextText = readObjective:CreateFontString(
+    "QuestTTSOptionsPanelSkipRecentTextText", "ARTWORK", "GameFontHighlightLeft"
+  )
+  skipRecentTextText:SetText("Skip recently played text")
+  skipRecentTextText:SetSize(275, 275)
+  skipRecentTextText:SetPoint("LEFT", skipRecentText, "RIGHT", 2, 1)
+  proxyLegacyCheckSetting(module.skipRecentText, skipRecentText)
+
   local autoReadQuest = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelAutoReadQuest", frame,
     "OptionsBaseCheckButtonTemplate"
@@ -377,13 +392,43 @@ local function initLegacySettings()
   autoReadGossipText:SetPoint("LEFT", autoReadGossip, "RIGHT", 2, 1)
   proxyLegacyCheckSetting(module.autoReadGossip, autoReadGossip)
 
+  local autoStopRead = CreateFrame(
+    "CheckButton", "QuestTTSOptionsPanelAutoStopRead", frame,
+    "OptionsBaseCheckButtonTemplate"
+  )
+  autoStopRead:SetPoint(
+    "TOPLEFT", "QuestTTSOptionsPanelReadObjective", "BOTTOMLEFT", 300, -8
+  )
+  local autoStopReadText = readObjective:CreateFontString(
+    "QuestTTSOptionsPanelAutoStopReadText", "ARTWORK", "GameFontHighlightLeft"
+  )
+  autoStopReadText:SetText("Auto stop read when closing quest/gossip frame or interacting with npc")
+  autoStopReadText:SetSize(275, 275)
+  autoStopReadText:SetPoint("LEFT", autoStopRead, "RIGHT", 2, 1)
+  proxyLegacyCheckSetting(module.autoStopRead, autoStopRead)
+
+  local hookAutoTurnIn = CreateFrame(
+    "CheckButton", "QuestTTSOptionsPanelHookAutoTurnIn", frame,
+    "OptionsBaseCheckButtonTemplate"
+  )
+  hookAutoTurnIn:SetPoint(
+    "TOPLEFT", "QuestTTSOptionsPanelSkipRecentText", "BOTTOMLEFT", 0, -8
+  )
+  local hookAutoTurnInText = readObjective:CreateFontString(
+    "QuestTTSOptionsPanelHookAutoTurnInText", "ARTWORK", "GameFontHighlightLeft"
+  )
+  hookAutoTurnInText:SetText("Enable experimental AutoTurnIn integration (requires reload)")
+  hookAutoTurnInText:SetSize(275, 275)
+  hookAutoTurnInText:SetPoint("LEFT", hookAutoTurnIn, "RIGHT", 2, 1)
+  proxyLegacyCheckSetting(module.hookAutoTurnIn, hookAutoTurnIn)
+
   local voice1 = CreateFrame(
     "Frame", "QuestTTSOptionsPanelVoice1DropDown", frame,
     "UIDropDownMenuTemplate"
   )
   voice1:EnableMouse(true)
   voice1:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelReadObjective", "BOTTOMLEFT", -13, -24
+    "TOPLEFT", "QuestTTSOptionsPanelHookAutoTurnIn", "BOTTOMLEFT", -13, -24
   )
   local voice1Text = voice1:CreateFontString(
     "QuestTTSOptionsPanelVoice1DropDownText", "BACKGROUND",
@@ -399,7 +444,7 @@ local function initLegacySettings()
   )
   voice2:EnableMouse(true)
   voice2:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelVoice1DropDown", "BOTTOMLEFT", 0, -24
+    "TOPLEFT", "QuestTTSOptionsPanelHookAutoTurnIn", "BOTTOMLEFT", 195, -24
   )
   local voice2Text = voice2:CreateFontString(
     "QuestTTSOptionsPanelVoice2DropDownText", "BACKGROUND",
@@ -415,7 +460,7 @@ local function initLegacySettings()
   )
   voice3:EnableMouse(true)
   voice3:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelVoice2DropDown", "BOTTOMLEFT", 0, -24
+    "TOPLEFT", "QuestTTSOptionsPanelHookAutoTurnIn", "BOTTOMLEFT", 400, -24
   )
   local voice3Text = voice3:CreateFontString(
     "QuestTTSOptionsPanelVoice3DropDownText", "BACKGROUND",
@@ -430,7 +475,7 @@ local function initLegacySettings()
   )
   voiceSpeed:SetSize(235, 17)
   voiceSpeed:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelVoice3DropDown", "TOPLEFT", 17, -50
+    "TOPLEFT", "QuestTTSOptionsPanelVoice1DropDown", "TOPLEFT", 17, -50
   )
   voiceSpeed:SetOrientation("HORIZONTAL")
   _G["QuestTTSOptionsPanelVoiceSpeedText"]:SetText("Voice speed")
@@ -446,7 +491,7 @@ local function initLegacySettings()
   )
   voiceVolume:SetSize(235, 17)
   voiceVolume:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelVoiceSpeed", "TOPLEFT", 0, -50
+    "TOPLEFT", "QuestTTSOptionsPanelVoice1DropDown", "TOPLEFT", 365, -50
   )
   voiceVolume:SetOrientation("HORIZONTAL")
   _G["QuestTTSOptionsPanelVoiceVolumeText"]:SetText("Voice volume")

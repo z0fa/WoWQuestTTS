@@ -3,8 +3,10 @@ local __namespace, __module = ...
 local Addon = __module.Addon --- @class Addon
 local Settings = __module.Settings
 
-local useHook = Addon.useHook
 local onLoad = Addon.onLoad
+local useEffect = Addon.useEffect
+local useHook = Addon.useHook
+
 
 local module = {}
 
@@ -14,6 +16,8 @@ function module.init()
   if not frame or not Settings.hookAutoTurnIn.get() then
     return
   end
+
+
 
   Settings.autoStopRead.set(true)
 
@@ -32,6 +36,8 @@ function module.init()
   useHook("QUEST_DETAIL", deferAction, "function", frame)
   useHook("GOSSIP_SHOW", deferAction, "function", frame)
 end
+
+
 
 onLoad(
   function()
