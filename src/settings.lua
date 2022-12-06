@@ -402,7 +402,9 @@ local function initLegacySettings()
   local autoStopReadText = readObjective:CreateFontString(
     "QuestTTSOptionsPanelAutoStopReadText", "ARTWORK", "GameFontHighlightLeft"
   )
-  autoStopReadText:SetText("Auto stop read when closing quest/gossip frame or interacting with npc")
+  autoStopReadText:SetText(
+    "Auto stop read when closing quest/gossip frame or interacting with npc"
+  )
   autoStopReadText:SetSize(275, 275)
   autoStopReadText:SetPoint("LEFT", autoStopRead, "RIGHT", 2, 1)
   proxyLegacyCheckSetting(module.autoStopRead, autoStopRead)
@@ -417,7 +419,9 @@ local function initLegacySettings()
   local hookAutoTurnInText = readObjective:CreateFontString(
     "QuestTTSOptionsPanelHookAutoTurnInText", "ARTWORK", "GameFontHighlightLeft"
   )
-  hookAutoTurnInText:SetText("Enable experimental AutoTurnIn integration (requires reload)")
+  hookAutoTurnInText:SetText(
+    "Enable experimental AutoTurnIn integration (requires reload)"
+  )
   hookAutoTurnInText:SetSize(275, 275)
   hookAutoTurnInText:SetPoint("LEFT", hookAutoTurnIn, "RIGHT", 2, 1)
   proxyLegacyCheckSetting(module.hookAutoTurnIn, hookAutoTurnIn)
