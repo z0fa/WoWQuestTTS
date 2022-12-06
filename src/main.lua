@@ -76,6 +76,11 @@ useGossipUpdateHook(
     module.ttsAutoPlay("gossip")
   end
 )
+useHook(
+  "OnHide", function()
+    module.ttsAutoStop()
+  end, "secure-widget", GossipFrame
+)
 
 useHook(
   "OnEvent", function(self, frame, event)
