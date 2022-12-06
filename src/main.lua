@@ -33,6 +33,8 @@ onInit(
 onLoad(
   function()
     module.initPlayButton(module.ttsToggle, module.openSettings)
+    module.hookGoosip()
+    module.hookQuest()
 
     if (alertVersion > Settings.alert.get()) then
       print(
@@ -50,44 +52,6 @@ useEvent(
   end, { "VOICE_CHAT_TTS_PLAYBACK_FINISHED", "VOICE_CHAT_TTS_PLAYBACK_FAILED" }
 )
 
-useHook(
-  "OnEvent", function(self, frame)
-    if not frame:IsShown() then
-      return
-    end
-
-    module.ttsAutoPlay("gossip")
-  end, "secure-widget", GossipFrame
-)
-useHook(
-  "OnHide", function()
-    module.ttsAutoStop()
-  end, "secure-widget", GossipFrame
-)
-
-useHook(
-  "OnEvent", function(self, frame, event)
-    if not frame:IsShown() then
-      return
-    end
-
-    if event == "QUEST_GREETING" then
-      module.ttsAutoPlay("quest:greeting")
-    elseif event == "QUEST_DETAIL" then
-      module.ttsAutoPlay("quest:detail")
-    elseif event == "QUEST_PROGRESS" then
-      module.ttsAutoPlay("quest:progress")
-    elseif event == "QUEST_COMPLETE" then
-      module.ttsAutoPlay("quest:reward")
-    end
-  end, "secure-widget", QuestFrame
-)
-useHook(
-  "OnHide", function()
-    module.ttsAutoStop()
-  end, "secure-widget", QuestFrame
-)
-
 useSlashCmd(
   function(cmd)
     if cmd == "play" then
@@ -101,6 +65,60 @@ useSlashCmd(
     end
   end, { "qtts" }
 )
+
+function module.hookGoosip()
+  if Addon.isRetail then
+    useHook(
+      "Update", function(self, frame)
+        if not frame:IsShown() then
+          return
+        end
+
+        module.ttsAutoPlay("gossip")
+      end, "secure-function", GossipFrame
+    )
+  elseif Addon.isWOTLK then
+    useHook(
+      "OnEvent", function(self, frame)
+        if not frame:IsShown() then
+          return
+        end
+
+        module.ttsAutoPlay("gossip")
+      end, "secure-widget", GossipFrame
+    )
+  end
+  useHook(
+    "OnHide", function()
+      module.ttsAutoStop()
+    end, "secure-widget", GossipFrame
+  )
+end
+
+function module.hookQuest()
+  useHook(
+    "OnEvent", function(self, frame, event)
+      if not frame:IsShown() then
+        return
+      end
+
+      if event == "QUEST_GREETING" then
+        module.ttsAutoPlay("quest:greeting")
+      elseif event == "QUEST_DETAIL" then
+        module.ttsAutoPlay("quest:detail")
+      elseif event == "QUEST_PROGRESS" then
+        module.ttsAutoPlay("quest:progress")
+      elseif event == "QUEST_COMPLETE" then
+        module.ttsAutoPlay("quest:reward")
+      end
+    end, "secure-widget", QuestFrame
+  )
+  useHook(
+    "OnHide", function()
+      module.ttsAutoStop()
+    end, "secure-widget", QuestFrame
+  )
+end
 
 function module.ttsAutoPlay(source)
   if source:find("quest") and not Settings.autoReadQuest.get() then

@@ -16,7 +16,7 @@ function module.init()
     return
   end
 
-  Settings.autoStopRead.set(true)
+  Settings.autoStopRead.set(false)
 
   local function deferAction(self, ...)
     local args = { ... }
