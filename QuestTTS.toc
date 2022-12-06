@@ -12,7 +12,12 @@ libs/array.lua
 libs/addon.lua
 
 src/settings.lua
-src/immersion.lua
-src/autoturnin.lua
+
+src/exp/retail.lua
+src/exp/wotlk.lua
+
+src/ext/immersion.lua
+src/ext/autoturnin.lua
+
 src/main.lua
 src/frames.xml

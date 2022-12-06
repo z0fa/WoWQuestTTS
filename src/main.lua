@@ -2,6 +2,7 @@ local __namespace, __module = ...
 
 local Array = __module.Array --- @class Array
 local Addon = __module.Addon --- @class Addon
+local CrossExp = __module.CrossExp --- @class Addon
 local Settings = __module.Settings
 
 local onInit = Addon.onInit
@@ -12,6 +13,7 @@ local useEvent = Addon.useEvent
 local useSlashCmd = Addon.useSlashCmd
 local useHook = Addon.useHook
 local print = Addon.print
+local useGossipUpdateHook = CrossExp.useGossipUpdateHook
 
 local module = {}
 
@@ -33,8 +35,7 @@ onInit(
 onLoad(
   function()
     module.initPlayButton(module.ttsToggle, module.openSettings)
-    module.hookGoosip()
-    module.hookQuest()
+    CrossExp.initSettings()
 
     if (alertVersion > Settings.alert.get()) then
       print(
@@ -66,59 +67,38 @@ useSlashCmd(
   end, { "qtts" }
 )
 
-function module.hookGoosip()
-  if Addon.isRetail then
-    useHook(
-      "Update", function(self, frame)
-        if not frame:IsShown() then
-          return
-        end
+useGossipUpdateHook(
+  function(self, frame)
+    if not frame:IsShown() then
+      return
+    end
 
-        module.ttsAutoPlay("gossip")
-      end, "secure-function", GossipFrame
-    )
-  elseif Addon.isWOTLK then
-    useHook(
-      "OnEvent", function(self, frame)
-        if not frame:IsShown() then
-          return
-        end
-
-        module.ttsAutoPlay("gossip")
-      end, "secure-widget", GossipFrame
-    )
+    module.ttsAutoPlay("gossip")
   end
-  useHook(
-    "OnHide", function()
-      module.ttsAutoStop()
-    end, "secure-widget", GossipFrame
-  )
-end
+)
 
-function module.hookQuest()
-  useHook(
-    "OnEvent", function(self, frame, event)
-      if not frame:IsShown() then
-        return
-      end
+useHook(
+  "OnEvent", function(self, frame, event)
+    if not frame:IsShown() then
+      return
+    end
 
-      if event == "QUEST_GREETING" then
-        module.ttsAutoPlay("quest:greeting")
-      elseif event == "QUEST_DETAIL" then
-        module.ttsAutoPlay("quest:detail")
-      elseif event == "QUEST_PROGRESS" then
-        module.ttsAutoPlay("quest:progress")
-      elseif event == "QUEST_COMPLETE" then
-        module.ttsAutoPlay("quest:reward")
-      end
-    end, "secure-widget", QuestFrame
-  )
-  useHook(
-    "OnHide", function()
-      module.ttsAutoStop()
-    end, "secure-widget", QuestFrame
-  )
-end
+    if event == "QUEST_GREETING" then
+      module.ttsAutoPlay("quest:greeting")
+    elseif event == "QUEST_DETAIL" then
+      module.ttsAutoPlay("quest:detail")
+    elseif event == "QUEST_PROGRESS" then
+      module.ttsAutoPlay("quest:progress")
+    elseif event == "QUEST_COMPLETE" then
+      module.ttsAutoPlay("quest:reward")
+    end
+  end, "secure-widget", QuestFrame
+)
+useHook(
+  "OnHide", function()
+    module.ttsAutoStop()
+  end, "secure-widget", QuestFrame
+)
 
 function module.ttsAutoPlay(source)
   if source:find("quest") and not Settings.autoReadQuest.get() then
@@ -188,11 +168,11 @@ function module.getText(source)
   source = module.guessSource(source)
 
   if source == "gossip" then
-    local gossip = module.getGossipText()
+    local gossip = CrossExp.getGossipText()
 
     toRet = toRet .. "\n" .. gossip
   elseif source == "quest:focused" then
-    local title = module.getQuestLogTitle()
+    local title = CrossExp.getQuestLogTitle()
     local description, objective = GetQuestLogQuestText()
 
     if Settings.readTitle.get() then
@@ -256,7 +236,7 @@ end
 function module.guessSource(source)
   local toRet = source
 
-  if source == nil and module.isQuestFrameShown() then
+  if source == nil and CrossExp.isQuestFrameShown() then
     toRet = "quest"
   elseif source == nil and GossipFrame:IsShown() then
     toRet = "gossip"
@@ -311,56 +291,6 @@ function module.openSettings()
   InterfaceOptionsFrame_OpenToCategory(__namespace)
 end
 
-function module.isQuestFrameShown()
-  local toRet = false
-
-  if QuestFrame:IsShown() then
-    toRet = true
-  elseif Addon.isWOTLK and QuestLogFrame:IsShown() then
-    toRet = true
-  elseif Addon.isWOTLK and QuestLogDetailFrame:IsShown() then
-    toRet = true
-  end
-
-  return toRet
-end
-
-function module.getGossipText()
-  local toRet = ""
-
-  if Addon.isRetail then
-    toRet = C_GossipInfo.GetText()
-  elseif Addon.isWOTLK then
-    toRet = GetGossipText()
-  end
-
-  return toRet
-end
-
-function module.getFocusedQuestId()
-  local toRet = 0
-
-  if Addon.isRetail then
-    toRet = QuestMapFrame_GetFocusedQuestID()
-  elseif Addon.isWOTLK then
-    toRet = GetQuestLogSelection()
-  end
-
-  return toRet
-end
-
-function module.getQuestLogTitle()
-  local toRet = ""
-
-  if Addon.isRetail then
-    toRet = C_QuestLog.GetTitleForQuestID(module.getFocusedQuestId())
-  elseif Addon.isWOTLK then
-    toRet = GetQuestLogTitle(module.getFocusedQuestId())
-  end
-
-  return toRet
-end
-
 function module.initPlayButton(onLeftClick, onRightClick)
   local function factory(parent, x, y, source)
     local toRet = CreateFrame("Button", nil, parent)
@@ -389,18 +319,7 @@ function module.initPlayButton(onLeftClick, onRightClick)
 
   local buttons = Array.new()
 
-  if Addon.isRetail then
-    buttons:push(factory(QuestMapFrame.DetailsFrame, 18, 30, "quest:focused"))
-    buttons:push(factory(QuestFrame, -20, 0, "quest"))
-    buttons:push(factory(GossipFrame, -20, 0, "gossip"))
-    buttons:push(factory(ItemTextFrame, -20, 0, "book"))
-  elseif Addon.isWOTLK then
-    buttons:push(factory(QuestFrame, -54, -20, "quest"))
-    buttons:push(factory(QuestLogFrame, -24, -13, "quest:focused"))
-    buttons:push(factory(QuestLogDetailFrame, -24, -13, "quest:focused"))
-    buttons:push(factory(GossipFrame, -54, -20, "gossip"))
-    buttons:push(factory(ItemTextFrame, -55, -14, "book"))
-  end
+  CrossExp.initPlayButton(buttons, factory)
 
   useEffect(
     function()
