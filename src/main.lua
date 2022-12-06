@@ -16,8 +16,7 @@ local print = Addon.print
 local module = {}
 
 local isPlaying = useState(false)
-
-local playHistory = Array.new()
+local textHistory = Array.new()
 local alertVersion = 1
 
 onInit(
@@ -62,7 +61,7 @@ useHook(
 )
 useHook(
   "OnHide", function()
-    module.ttsStop()
+    module.ttsAutoStop()
   end, "secure-widget", GossipFrame
 )
 
@@ -85,7 +84,7 @@ useHook(
 )
 useHook(
   "OnHide", function()
-    module.ttsStop()
+    module.ttsAutoStop()
   end, "secure-widget", QuestFrame
 )
 
@@ -111,21 +110,21 @@ function module.ttsAutoPlay(source)
   end
 
   if isPlaying.get() then
-    module.ttsStop()
+    module.ttsAutoStop()
   end
 
   local text = module.getText(source)
 
-  local isRecentText = playHistory:some(
+  local isRecentText = textHistory:some(
     function(element, index, array)
       return element == text
     end
   )
 
-  playHistory:unshift(text)
-  playHistory = playHistory:slice(1, 10)
+  textHistory:unshift(text)
+  textHistory = textHistory:slice(1, 10)
 
-  if isRecentText then
+  if isRecentText and Settings.skipRecentText.get() then
     return
   end
 
@@ -136,68 +135,20 @@ function module.ttsAutoPlay(source)
   )
 end
 
+function module.ttsAutoStop()
+  if not Settings.autoStopRead.get() then
+    return
+  end
+
+  module.ttsStop()
+end
+
 function module.ttsToggle(source)
   if isPlaying.get() then
     module.ttsStop()
   else
     module.ttsPlay(module.getText(source))
   end
-end
-
-function module.getText(source)
-  local title = ""
-  local description = ""
-  local objective = ""
-  local info = ""
-  local reward = ""
-  local progress = ""
-
-  source = module.guessSource(source)
-
-  if source == "gossip" then
-    info = module.getGossipText()
-  elseif source == "quest:focused" then
-    title = module.getQuestLogTitle()
-    description, objective = GetQuestLogQuestText()
-  elseif source == "quest:greeting" then
-    -- title = GetTitleText()
-    description = GetGreetingText()
-  elseif source == "quest:detail" then
-    title = GetTitleText()
-    description = GetQuestText()
-    objective = GetObjectiveText()
-  elseif source == "quest:progress" then
-    -- title = GetTitleText()
-    progress = GetProgressText()
-  elseif source == "quest:reward" then
-    -- title = GetTitleText()
-    reward = GetRewardText()
-  elseif source == "book:1" then
-    title = ItemTextGetItem()
-    description = ItemTextGetText()
-  elseif source and source:find("^book:") then
-    description = ItemTextGetText()
-  end
-
-  local text = ""
-
-  if Settings.readTitle.get() then
-    text = text .. "\n" .. title
-  end
-
-  text = text .. "\n" .. description
-
-  if Settings.readObjective.get() then
-    text = text .. "\n" .. objective
-  end
-
-  text = text .. "\n" .. info
-  text = text .. "\n" .. reward
-  text = text .. "\n" .. progress
-
-  text = text:gsub("<", ""):gsub(">", "")
-
-  return text
 end
 
 function module.ttsPlay(text)
@@ -211,6 +162,77 @@ end
 
 function module.ttsStop()
   C_VoiceChat.StopSpeakingText()
+end
+
+function module.getText(source)
+  local toRet = ""
+
+  source = module.guessSource(source)
+
+  if source == "gossip" then
+    local gossip = module.getGossipText()
+
+    toRet = toRet .. "\n" .. gossip
+  elseif source == "quest:focused" then
+    local title = module.getQuestLogTitle()
+    local description, objective = GetQuestLogQuestText()
+
+    if Settings.readTitle.get() then
+      toRet = toRet .. "\n" .. title
+    end
+
+    toRet = toRet .. "\n" .. description
+
+    if Settings.readObjective.get() then
+      toRet = toRet .. "\n" .. objective
+    end
+  elseif source == "quest:greeting" then
+    -- local title = GetTitleText()
+    local greeting = GetGreetingText()
+
+    toRet = toRet .. "\n" .. greeting
+  elseif source == "quest:detail" then
+    local title = GetTitleText()
+    local description = GetQuestText()
+    local objective = GetObjectiveText()
+
+    if Settings.readTitle.get() then
+      toRet = toRet .. "\n" .. title
+    end
+
+    toRet = toRet .. "\n" .. description
+
+    if Settings.readObjective.get() then
+      toRet = toRet .. "\n" .. objective
+    end
+  elseif source == "quest:progress" then
+    -- local title = GetTitleText()
+    local progress = GetProgressText()
+
+    toRet = toRet .. "\n" .. progress
+  elseif source == "quest:reward" then
+    -- title = GetTitleText()
+    local reward = GetRewardText()
+
+    toRet = toRet .. "\n" .. reward
+  elseif source == "book:1" then
+    local title = ItemTextGetItem()
+    local description = ItemTextGetText()
+
+    if Settings.readTitle.get() then
+      toRet = toRet .. "\n" .. title
+    end
+
+    toRet = toRet .. "\n" .. description
+  elseif source and source:find("^book:") then
+    local description = ItemTextGetText()
+
+    toRet = toRet .. "\n" .. description
+  end
+
+  toRet = toRet:gsub("<", ""):gsub(">", "")
+
+  return toRet
 end
 
 function module.guessSource(source)

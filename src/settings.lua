@@ -17,6 +17,9 @@ local module = {
   voiceVolume = useSavedVariable(globalDB, "voiceVolume", 100),
   autoReadQuest = useSavedVariable(globalDB, "autoReadQuest", false),
   autoReadGossip = useSavedVariable(globalDB, "autoReadGossip", false),
+  skipRecentText = useSavedVariable(globalDB, "skipRecentText", false),
+  autoStopRead = useSavedVariable(globalDB, "autoStopRead", true),
+  hookAutoTurnIn = useSavedVariable(globalDB, "hookAutoTurnIn", false),
   alert = useSavedVariable(globalDB, "alert", 0),
 }
 
@@ -216,6 +219,23 @@ local function initRetailSettings()
     category, module.autoReadGossip, "Auto read gossip text"
   )
   Settings.CreateCheckBox(category, autoReadGossip, "")
+
+  local skipRecentText = proxyRetailSetting(
+    category, module.skipRecentText, "Skip recently played text"
+  )
+  Settings.CreateCheckBox(category, skipRecentText, "")
+
+  local autoStopRead = proxyRetailSetting(
+    category, module.autoStopRead,
+    "Auto stop read when closing quest/gossip frame or interacting with npc"
+  )
+  Settings.CreateCheckBox(category, autoStopRead, "")
+
+  local hookAutoTurnIn = proxyRetailSetting(
+    category, module.hookAutoTurnIn,
+    "Enable experimental AutoTurnIn integration (requires reload)"
+  )
+  Settings.CreateCheckBox(category, hookAutoTurnIn, "")
 
   local voice1 = proxyRetailSetting(
     category, module.voice1, "Voice for male npcs"
