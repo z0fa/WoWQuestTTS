@@ -60,6 +60,8 @@ function module.init()
         source = "quest:greeting"
       elseif npcType:find("IncompleteQuest") then
         source = "quest:progress"
+      elseif npcType:find("ActiveQuest") and GetProgressText() ~= "" then
+        source = "quest:progress"
       elseif npcType:find("ActiveQuest") then
         source = "quest:reward"
       elseif npcType:find("AvailableQuest") then
