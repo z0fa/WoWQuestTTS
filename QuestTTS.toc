@@ -16,8 +16,8 @@ src/settings.lua
 src/expansions/retail.lua
 src/expansions/legacy.lua
 
-src/integrations/immersion.lua
-src/integrations/autoturnin.lua
+src/addons/immersion.lua
+src/addons/autoturnin.lua
 
 src/main.lua
 src/frames.xml
