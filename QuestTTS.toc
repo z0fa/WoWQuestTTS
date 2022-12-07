@@ -13,11 +13,11 @@ libs/addon.lua
 
 src/settings.lua
 
-src/exp/retail.lua
-src/exp/wotlk.lua
+src/expansions/retail.lua
+src/expansions/legacy.lua
 
-src/ext/immersion.lua
-src/ext/autoturnin.lua
+src/integrations/immersion.lua
+src/integrations/autoturnin.lua
 
 src/main.lua
 src/frames.xml

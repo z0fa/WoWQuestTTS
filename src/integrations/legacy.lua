@@ -391,6 +391,6 @@ function module.initSettings()
   InterfaceOptions_AddCategory(frame)
 end
 
-if Addon.isWOTLK then
+if not Addon.isRetail then
   __module.CrossExp = module
 end
