@@ -10,26 +10,27 @@ local useHook = Addon.useHook
 local module = {}
 
 function module.isQuestFrameShown()
-  return QuestFrame:IsShown()
+  return QuestLogFrame:IsShown() or QuestLogDetailFrame:IsShown()
 end
 
 function module.getGossipText()
-  return C_GossipInfo.GetText()
+  return GetGossipText()
 end
 
 function module.getQuestLogTitle()
-  return C_QuestLog.GetTitleForQuestID(QuestMapFrame_GetFocusedQuestID())
+  return GetQuestLogTitle(GetQuestLogSelection())
 end
 
 function module.useGossipUpdateHook(fn)
-  useHook("Update", fn, "secure-function", GossipFrame)
+  useHook("OnEvent", fn, "secure-widget", GossipFrame)
 end
 
 function module.initPlayButton(buttons, factory)
-  buttons:push(factory(QuestMapFrame.DetailsFrame, 18, 30, "quest:focused"))
-  buttons:push(factory(QuestFrame, -20, 0, "quest"))
-  buttons:push(factory(GossipFrame, -20, 0, "gossip"))
-  buttons:push(factory(ItemTextFrame, -20, 0, "book"))
+  buttons:push(factory(QuestFrame, -54, -20, "quest"))
+  buttons:push(factory(QuestLogFrame, -24, -13, "quest:focused"))
+  buttons:push(factory(QuestLogDetailFrame, -24, -13, "quest:focused"))
+  buttons:push(factory(GossipFrame, -54, -20, "gossip"))
+  buttons:push(factory(ItemTextFrame, -55, -14, "book"))
 end
 
 function module.initSettings()
