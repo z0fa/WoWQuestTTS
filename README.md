@@ -10,11 +10,11 @@ World of Warcraft addon that use the 9.1 TTS api to read quests text (out loud),
 
 # FAQS
 
-## How can I add additional voices?
+### How can I add additional voices?
 
 The add-on already lists all the installed voices in the system, if you manage to find some free third party voices you can try to install them and if they are compatible they should appear in the list. Unfortunately the availability of the voices is something out of the scope of the add-on
 
-## The TTS randomly stops working
+### The TTS randomly stops working
 
 It could be the windows TTS process not being active. Opening the "Speech" settings in Windows should fix the problem (credits: BiktiBikti)
 
