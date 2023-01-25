@@ -1,4 +1,6 @@
-## Interface: 100000
+## Interface: 100005
+## Interface-Classic: 11403
+## Interface-BCC: 20504
 ## Interface-Wrath: 30400
 ## Author: Giovanni Cavallo "z0fa"
 ## Version: @project-version@
