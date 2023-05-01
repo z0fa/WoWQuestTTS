@@ -9,6 +9,7 @@ local globalDB = "QuestTTSGlobalDB"
 local module = {
   readTitle = useSavedVariable(globalDB, "readTitle", true),
   readObjective = useSavedVariable(globalDB, "readObjective", true),
+  readNpcName = useSavedVariable(globalDB, "readNpcName", false),
   voice1 = useSavedVariable(globalDB, "voice1", Enum.TtsVoiceType.Standard),
   voice2 = useSavedVariable(globalDB, "voice2", Enum.TtsVoiceType.Standard),
   voice3 = useSavedVariable(globalDB, "voice3", Enum.TtsVoiceType.Standard),

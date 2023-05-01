@@ -173,7 +173,12 @@ function module.getText(source)
   source = module.guessSource(source)
 
   if source == "gossip" then
+    local npcName = UnitName("npc")
     local gossip = CrossExp.getGossipText()
+
+    if Settings.readNpcName.get() then
+      toRet = toRet .. "\n" .. npcName
+    end
 
     toRet = toRet .. "\n" .. gossip
   elseif source == "quest:focused" then
@@ -190,8 +195,13 @@ function module.getText(source)
       toRet = toRet .. "\n" .. objective
     end
   elseif source == "quest:greeting" then
+    local npcName = UnitName("npc")
     -- local title = GetTitleText()
     local greeting = GetGreetingText()
+
+    if Settings.readNpcName.get() then
+      toRet = toRet .. "\n" .. npcName
+    end
 
     toRet = toRet .. "\n" .. greeting
   elseif source == "quest:detail" then

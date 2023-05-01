@@ -14,7 +14,7 @@ function module.isQuestFrameShown()
 end
 
 function module.getGossipText()
-  return GetGossipText()
+  return C_GossipInfo.GetText()
 end
 
 function module.getQuestLogTitle()
@@ -223,12 +223,27 @@ function module.initSettings()
   readObjectiveText:SetPoint("LEFT", readObjective, "RIGHT", 2, 1)
   proxyCheckSetting(MySettings.readObjective, readObjective)
 
+  local readNpcName = CreateFrame(
+    "CheckButton", "QuestTTSOptionsPanelReadNpcName", frame,
+    "OptionsBaseCheckButtonTemplate"
+  )
+  readNpcName:SetPoint(
+    "TOPLEFT", "QuestTTSOptionsPanelReadObjective", "BOTTOMLEFT", 0, -8
+  )
+  local readNpcNameText = readNpcName:CreateFontString(
+    "QuestTTSOptionsPanelReadNpcNameText", "ARTWORK", "GameFontHighlightLeft"
+  )
+  readNpcNameText:SetText("Read npc name")
+  readNpcNameText:SetSize(275, 275)
+  readNpcNameText:SetPoint("LEFT", readNpcName, "RIGHT", 2, 1)
+  proxyCheckSetting(MySettings.readNpcName, readNpcName)
+
   local skipRecentText = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelSkipRecentText", frame,
     "OptionsBaseCheckButtonTemplate"
   )
   skipRecentText:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelReadObjective", "BOTTOMLEFT", 0, -8
+    "TOPLEFT", "QuestTTSOptionsPanelReadNpcName", "BOTTOMLEFT", 0, -8
   )
   local skipRecentTextText = readObjective:CreateFontString(
     "QuestTTSOptionsPanelSkipRecentTextText", "ARTWORK", "GameFontHighlightLeft"
@@ -290,7 +305,7 @@ function module.initSettings()
     "OptionsBaseCheckButtonTemplate"
   )
   hookAutoTurnIn:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelSkipRecentText", "BOTTOMLEFT", 0, -8
+    "TOPLEFT", "QuestTTSOptionsPanelAutoStopRead", "BOTTOMLEFT", 0, -8
   )
   local hookAutoTurnInText = readObjective:CreateFontString(
     "QuestTTSOptionsPanelHookAutoTurnInText", "ARTWORK", "GameFontHighlightLeft"
@@ -308,7 +323,7 @@ function module.initSettings()
   )
   voice1:EnableMouse(true)
   voice1:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelHookAutoTurnIn", "BOTTOMLEFT", -13, -24
+    "TOPLEFT", "QuestTTSOptionsPanelSkipRecentText", "BOTTOMLEFT", -13, -24
   )
   local voice1Text = voice1:CreateFontString(
     "QuestTTSOptionsPanelVoice1DropDownText", "BACKGROUND",
@@ -324,7 +339,7 @@ function module.initSettings()
   )
   voice2:EnableMouse(true)
   voice2:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelHookAutoTurnIn", "BOTTOMLEFT", 195, -24
+    "TOPLEFT", "QuestTTSOptionsPanelSkipRecentText", "BOTTOMLEFT", 195, -24
   )
   local voice2Text = voice2:CreateFontString(
     "QuestTTSOptionsPanelVoice2DropDownText", "BACKGROUND",
@@ -340,7 +355,7 @@ function module.initSettings()
   )
   voice3:EnableMouse(true)
   voice3:SetPoint(
-    "TOPLEFT", "QuestTTSOptionsPanelHookAutoTurnIn", "BOTTOMLEFT", 400, -24
+    "TOPLEFT", "QuestTTSOptionsPanelSkipRecentText", "BOTTOMLEFT", 400, -24
   )
   local voice3Text = voice3:CreateFontString(
     "QuestTTSOptionsPanelVoice3DropDownText", "BACKGROUND",

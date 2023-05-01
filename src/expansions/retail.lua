@@ -84,6 +84,11 @@ function module.initSettings()
   )
   Settings.CreateCheckBox(category, readObjective, "")
 
+  local readNpcName = proxySetting(
+    category, MySettings.readNpcName, "Read npc name"
+  )
+  Settings.CreateCheckBox(category, readNpcName, "")
+
   local autoReadQuest = proxySetting(
     category, MySettings.autoReadQuest, "Auto read quest text"
   )
