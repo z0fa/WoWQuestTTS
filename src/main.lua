@@ -177,22 +177,22 @@ function module.getText(source)
     local gossip = CrossExp.getGossipText()
 
     if Settings.readNpcName.get() then
-      toRet = toRet .. "\n" .. npcName
+      toRet = toRet .. "\n" .. npcName .. ":"
     end
 
-    toRet = toRet .. "\n" .. gossip
+    toRet = toRet .. "\n" .. gossip .. "."
   elseif source == "quest:focused" then
     local title = CrossExp.getQuestLogTitle()
     local description, objective = GetQuestLogQuestText()
 
     if Settings.readTitle.get() then
-      toRet = toRet .. "\n" .. title
+      toRet = toRet .. "\n" .. title .. "."
     end
 
-    toRet = toRet .. "\n" .. description
+    toRet = toRet .. "\n" .. description .. "."
 
     if Settings.readObjective.get() then
-      toRet = toRet .. "\n" .. objective
+      toRet = toRet .. "\n" .. objective .. "."
     end
   elseif source == "quest:greeting" then
     local npcName = UnitName("npc")
@@ -200,47 +200,47 @@ function module.getText(source)
     local greeting = GetGreetingText()
 
     if Settings.readNpcName.get() then
-      toRet = toRet .. "\n" .. npcName
+      toRet = toRet .. "\n" .. npcName .. ":"
     end
 
-    toRet = toRet .. "\n" .. greeting
+    toRet = toRet .. "\n" .. greeting .. "."
   elseif source == "quest:detail" then
     local title = GetTitleText()
     local description = GetQuestText()
     local objective = GetObjectiveText()
 
     if Settings.readTitle.get() then
-      toRet = toRet .. "\n" .. title
+      toRet = toRet .. "\n" .. title .. "."
     end
 
-    toRet = toRet .. "\n" .. description
+    toRet = toRet .. "\n" .. description .. "."
 
     if Settings.readObjective.get() then
-      toRet = toRet .. "\n" .. objective
+      toRet = toRet .. "\n" .. objective .. "."
     end
   elseif source == "quest:progress" then
     -- local title = GetTitleText()
     local progress = GetProgressText()
 
-    toRet = toRet .. "\n" .. progress
+    toRet = toRet .. "\n" .. progress .. "."
   elseif source == "quest:reward" then
     -- title = GetTitleText()
     local reward = GetRewardText()
 
-    toRet = toRet .. "\n" .. reward
+    toRet = toRet .. "\n" .. reward .. "."
   elseif source == "book:1" then
     local title = ItemTextGetItem()
     local description = ItemTextGetText()
 
     if Settings.readTitle.get() then
-      toRet = toRet .. "\n" .. title
+      toRet = toRet .. "\n" .. title .. "."
     end
 
-    toRet = toRet .. "\n" .. description
+    toRet = toRet .. "\n" .. description .. "."
   elseif source and source:find("^book:") then
     local description = ItemTextGetText()
 
-    toRet = toRet .. "\n" .. description
+    toRet = toRet .. "\n" .. description .. "."
   end
 
   toRet = toRet:gsub("<", ""):gsub(">", "")
