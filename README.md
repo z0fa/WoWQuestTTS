@@ -21,6 +21,7 @@ It could be the windows TTS process not being active. Opening the "Speech" setti
 # Credits
 
 - [FangOfAsgard](https://www.curseforge.com/members/fangofasgard): keybind and dynamic voice
+- [MrMartiniMo](https://github.com/MrMartiniMo): reading pause between title and text
 
 # Links
 
