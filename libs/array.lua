@@ -111,7 +111,7 @@ function module:fill()
 end
 
 --- comment
---- @param callbackFn fun(element: unknown, index: integer, array: Array)
+--- @param callbackFn fun(element: unknown, index: integer, array: Array): boolean
 --- @return Array
 function module:filter(callbackFn)
   local toRet = module.new()
@@ -126,7 +126,7 @@ function module:filter(callbackFn)
 end
 
 --- comment
---- @param callbackFn fun(element: unknown, index: integer, array: Array)
+--- @param callbackFn fun(element: unknown, index: integer, array: Array): boolean
 --- @return unknown | nil
 function module:find(callbackFn)
   for i, v in ipairs(self) do
@@ -139,7 +139,7 @@ function module:find(callbackFn)
 end
 
 --- comment
---- @param callbackFn fun(element: unknown, index: integer, array: Array)
+--- @param callbackFn fun(element: unknown, index: integer, array: Array): boolean
 --- @return integer
 function module:findIndex(callbackFn)
   for i, v in ipairs(self) do
@@ -184,7 +184,7 @@ function module:keys()
 end
 
 --- comment
---- @param callbackFn fun(element: unknown, index: integer, array: Array)
+--- @param callbackFn fun(element: unknown, index: integer, array: Array): unknown
 --- @return Array
 function module:map(callbackFn)
   local toRet = module.new()
@@ -209,7 +209,7 @@ function module:push(...)
 end
 
 --- comment
---- @param callbackFn fun(accumulator: unknown, element: unknown, index: integer, array: Array)
+--- @param callbackFn fun(accumulator: unknown, element: unknown, index: integer, array: Array): unknown
 --- @param initialVal unknown
 --- @return Array
 function module:reduce(callbackFn, initialVal)

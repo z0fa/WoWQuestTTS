@@ -397,12 +397,6 @@ function module.initSettings()
     TEXTTOSPEECH_VOLUME_MAX, 1
   )
 
-  local advertisement = CreateFrame(
-    "Frame", "QuestTTSOptionsPanelAdvertisement", frame, "QuestTTSAdvertisement"
-  )
-  advertisement:SetSize(590, 200)
-  advertisement:SetPoint("BOTTOMLEFT", 18, 22)
-
   frame.name = __namespace
   InterfaceOptions_AddCategory(frame)
 end

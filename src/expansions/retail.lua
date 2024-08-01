@@ -77,58 +77,58 @@ function module.initSettings()
   local readTitle = proxySetting(
     category, MySettings.readTitle, "Read quest title"
   )
-  Settings.CreateCheckBox(category, readTitle, "")
+  Settings.CreateCheckbox(category, readTitle, "")
 
   local readObjective = proxySetting(
     category, MySettings.readObjective, "Read quest objective"
   )
-  Settings.CreateCheckBox(category, readObjective, "")
+  Settings.CreateCheckbox(category, readObjective, "")
 
   local readNpcName = proxySetting(
     category, MySettings.readNpcName, "Read npc name"
   )
-  Settings.CreateCheckBox(category, readNpcName, "")
+  Settings.CreateCheckbox(category, readNpcName, "")
 
   local autoReadQuest = proxySetting(
     category, MySettings.autoReadQuest, "Auto read quest text"
   )
-  Settings.CreateCheckBox(category, autoReadQuest, "")
+  Settings.CreateCheckbox(category, autoReadQuest, "")
 
   local autoReadGossip = proxySetting(
     category, MySettings.autoReadGossip, "Auto read gossip text"
   )
-  Settings.CreateCheckBox(category, autoReadGossip, "")
+  Settings.CreateCheckbox(category, autoReadGossip, "")
 
   local skipRecentText = proxySetting(
     category, MySettings.skipRecentText, "Skip recently played text"
   )
-  Settings.CreateCheckBox(category, skipRecentText, "")
+  Settings.CreateCheckbox(category, skipRecentText, "")
 
   local autoStopRead = proxySetting(
     category, MySettings.autoStopRead,
     "Auto stop read when closing quest/gossip frame or interacting with npc"
   )
-  Settings.CreateCheckBox(category, autoStopRead, "")
+  Settings.CreateCheckbox(category, autoStopRead, "")
 
   local hookAutoTurnIn = proxySetting(
     category, MySettings.hookAutoTurnIn,
     "Enable experimental AutoTurnIn integration (requires reload)"
   )
-  Settings.CreateCheckBox(category, hookAutoTurnIn, "")
+  Settings.CreateCheckbox(category, hookAutoTurnIn, "")
 
   local voice1 =
     proxySetting(category, MySettings.voice1, "Voice for male npcs")
-  Settings.CreateDropDown(category, voice1, getVoiceOptions, "")
+  Settings.CreateDropdown(category, voice1, getVoiceOptions, "")
 
   local voice2 = proxySetting(
     category, MySettings.voice2, "Voice for female npcs"
   )
-  Settings.CreateDropDown(category, voice2, getVoiceOptions, "")
+  Settings.CreateDropdown(category, voice2, getVoiceOptions, "")
 
   local voice3 = proxySetting(
     category, MySettings.voice3, "Voice for other gender npcs"
   )
-  Settings.CreateDropDown(category, voice3, getVoiceOptions, "")
+  Settings.CreateDropdown(category, voice3, getVoiceOptions, "")
 
   local voiceSpeed =
     proxySetting(category, MySettings.voiceSpeed, "Voice speed")
@@ -159,12 +159,6 @@ function module.initSettings()
     end
   )
   Settings.CreateSlider(category, voiceVolume, voiceVolumeOptions, "")
-
-  layout:AddInitializer(
-    Settings.CreatePanelInitializer(
-      "QuestTTSAdvertisement", {}
-    )
-  )
 
   Settings.RegisterAddOnCategory(category)
 end

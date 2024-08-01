@@ -120,11 +120,16 @@ end
 --- @param defaultValue any
 --- @return ReactiveSavedVariable
 function module.useSavedVariable(globalName, varName, defaultValue)
-  local toRet = module.useState(defaultValue)
+  local state = module.useState(defaultValue)
 
-  toRet.globalName = globalName
-  toRet.varName = varName
-  toRet.defaultValue = defaultValue
+  local toRet = {
+    get = state.get,
+    set = state.set,
+    ref = state.ref,
+    globalName = globalName,
+    varName = varName,
+    defaultValue = defaultValue,
+  }
 
   module.onLoad(
     function()
@@ -155,7 +160,7 @@ function module.useEvent(fn, events, once)
   local eventsArray = Array.new(events or {})
   once = once or false
 
-  local unsub = nil
+  local function unsub() end
 
   local function handler(...)
     local result = fn(...)
@@ -231,7 +236,7 @@ function module.useHook(fnName, fn, hookType, srcTable, once)
   hookType = hookType or "function"
   srcTable = srcTable or _G
 
-  local unhook = nil
+  local function unhook () end
 
   local enabled = true
   local oldFn = nil
@@ -305,7 +310,7 @@ end
 
 --- comment
 --- @param label string
---- @param dep ReactiveData[]
+--- @param dep ReactiveData
 function module.useDebugValue(label, dep)
   module.useEffect(
     function()
@@ -402,5 +407,6 @@ module.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 module.isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 module.isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 module.isWOTLK = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+module.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 
 __module.Addon = module
