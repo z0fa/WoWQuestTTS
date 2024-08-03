@@ -26,7 +26,7 @@ function module.useGossipUpdateHook(fn)
 end
 
 function module.initPlayButton(buttons, factory)
-  buttons:push(factory(QuestMapFrame.DetailsFrame, 18, 30, "quest:focused"))
+  buttons:push(factory(QuestMapFrame.DetailsFrame.BackFrame, -8, -10, "quest:focused"))
   buttons:push(factory(QuestFrame, -20, 0, "quest"))
   buttons:push(factory(GossipFrame, -20, 0, "gossip"))
   buttons:push(factory(ItemTextFrame, -20, 0, "book"))
