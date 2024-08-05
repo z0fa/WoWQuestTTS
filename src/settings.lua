@@ -7,6 +7,7 @@ local useSavedVariable = Addon.useSavedVariable
 local globalDB = "QuestTTSGlobalDB"
 
 local module = {
+  CATEGORY_ID = nil,
   readTitle = useSavedVariable(globalDB, "readTitle", true),
   readObjective = useSavedVariable(globalDB, "readObjective", true),
   readNpcName = useSavedVariable(globalDB, "readNpcName", false),

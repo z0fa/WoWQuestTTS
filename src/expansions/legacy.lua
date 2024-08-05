@@ -2,7 +2,7 @@ local __namespace, __module = ...
 
 local Addon = __module.Addon --- @class Addon
 local Array = __module.Array --- @class Array
-local MySettings = __module.Settings
+local Settings = __module.Settings
 
 local onLoad = Addon.onLoad
 local useHook = Addon.useHook
@@ -206,7 +206,7 @@ function module.initSettings()
   readTitleText:SetText("Read quest title")
   readTitleText:SetSize(275, 275)
   readTitleText:SetPoint("LEFT", readTitle, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.readTitle, readTitle)
+  proxyCheckSetting(Settings.readTitle, readTitle)
 
   local readObjective = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelReadObjective", frame,
@@ -221,7 +221,7 @@ function module.initSettings()
   readObjectiveText:SetText("Read quest objective")
   readObjectiveText:SetSize(275, 275)
   readObjectiveText:SetPoint("LEFT", readObjective, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.readObjective, readObjective)
+  proxyCheckSetting(Settings.readObjective, readObjective)
 
   local readNpcName = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelReadNpcName", frame,
@@ -236,7 +236,7 @@ function module.initSettings()
   readNpcNameText:SetText("Read npc name")
   readNpcNameText:SetSize(275, 275)
   readNpcNameText:SetPoint("LEFT", readNpcName, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.readNpcName, readNpcName)
+  proxyCheckSetting(Settings.readNpcName, readNpcName)
 
   local skipRecentText = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelSkipRecentText", frame,
@@ -251,7 +251,7 @@ function module.initSettings()
   skipRecentTextText:SetText("Skip recently played text")
   skipRecentTextText:SetSize(275, 275)
   skipRecentTextText:SetPoint("LEFT", skipRecentText, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.skipRecentText, skipRecentText)
+  proxyCheckSetting(Settings.skipRecentText, skipRecentText)
 
   local autoReadQuest = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelAutoReadQuest", frame,
@@ -266,7 +266,7 @@ function module.initSettings()
   autoReadQuestText:SetText("Auto read quest text")
   autoReadQuestText:SetSize(275, 275)
   autoReadQuestText:SetPoint("LEFT", autoReadQuest, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.autoReadQuest, autoReadQuest)
+  proxyCheckSetting(Settings.autoReadQuest, autoReadQuest)
 
   local autoReadGossip = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelAutoReadGossip", frame,
@@ -281,7 +281,7 @@ function module.initSettings()
   autoReadGossipText:SetText("Auto read gossip text")
   autoReadGossipText:SetSize(275, 275)
   autoReadGossipText:SetPoint("LEFT", autoReadGossip, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.autoReadGossip, autoReadGossip)
+  proxyCheckSetting(Settings.autoReadGossip, autoReadGossip)
 
   local autoStopRead = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelAutoStopRead", frame,
@@ -298,7 +298,7 @@ function module.initSettings()
   )
   autoStopReadText:SetSize(275, 275)
   autoStopReadText:SetPoint("LEFT", autoStopRead, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.autoStopRead, autoStopRead)
+  proxyCheckSetting(Settings.autoStopRead, autoStopRead)
 
   local hookAutoTurnIn = CreateFrame(
     "CheckButton", "QuestTTSOptionsPanelHookAutoTurnIn", frame,
@@ -315,7 +315,7 @@ function module.initSettings()
   )
   hookAutoTurnInText:SetSize(275, 275)
   hookAutoTurnInText:SetPoint("LEFT", hookAutoTurnIn, "RIGHT", 2, 1)
-  proxyCheckSetting(MySettings.hookAutoTurnIn, hookAutoTurnIn)
+  proxyCheckSetting(Settings.hookAutoTurnIn, hookAutoTurnIn)
 
   local voice1 = CreateFrame(
     "Frame", "QuestTTSOptionsPanelVoice1DropDown", frame,
@@ -331,7 +331,7 @@ function module.initSettings()
   )
   voice1Text:SetText("Voice for male npc")
   voice1Text:SetPoint("BOTTOMLEFT", voice1, "TOPLEFT", 16, 3)
-  proxyVoiceSetting(MySettings.voice1, voice1)
+  proxyVoiceSetting(Settings.voice1, voice1)
 
   local voice2 = CreateFrame(
     "Frame", "QuestTTSOptionsPanelVoice2DropDown", frame,
@@ -347,7 +347,7 @@ function module.initSettings()
   )
   voice2Text:SetText("Voice for female npc")
   voice2Text:SetPoint("BOTTOMLEFT", voice2, "TOPLEFT", 16, 3)
-  proxyVoiceSetting(MySettings.voice2, voice2)
+  proxyVoiceSetting(Settings.voice2, voice2)
 
   local voice3 = CreateFrame(
     "Frame", "QuestTTSOptionsPanelVoice3DropDown", frame,
@@ -363,7 +363,7 @@ function module.initSettings()
   )
   voice3Text:SetText("Voice for other gender npcs")
   voice3Text:SetPoint("BOTTOMLEFT", voice3, "TOPLEFT", 16, 3)
-  proxyVoiceSetting(MySettings.voice3, voice3)
+  proxyVoiceSetting(Settings.voice3, voice3)
 
   local voiceSpeed = CreateFrame(
     "Slider", "QuestTTSOptionsPanelVoiceSpeed", frame, "OptionsSliderTemplate"
@@ -377,7 +377,7 @@ function module.initSettings()
   _G["QuestTTSOptionsPanelVoiceSpeedLow"]:SetText("Slow")
   _G["QuestTTSOptionsPanelVoiceSpeedHigh"]:SetText("Fast")
   proxySliderSetting(
-    MySettings.voiceSpeed, voiceSpeed, TEXTTOSPEECH_RATE_MIN,
+    Settings.voiceSpeed, voiceSpeed, TEXTTOSPEECH_RATE_MIN,
     TEXTTOSPEECH_RATE_MAX, 1
   )
 
@@ -393,7 +393,7 @@ function module.initSettings()
   _G["QuestTTSOptionsPanelVoiceVolumeLow"]:SetText("0%")
   _G["QuestTTSOptionsPanelVoiceVolumeHigh"]:SetText("100%")
   proxySliderSetting(
-    MySettings.voiceVolume, voiceVolume, TEXTTOSPEECH_VOLUME_MIN,
+    Settings.voiceVolume, voiceVolume, TEXTTOSPEECH_VOLUME_MIN,
     TEXTTOSPEECH_VOLUME_MAX, 1
   )
 

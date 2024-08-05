@@ -4,6 +4,7 @@ local Array = __module.Array --- @class Array
 local Addon = __module.Addon --- @class Addon
 local CrossExp = __module.CrossExp --- @class Addon
 local Settings = __module.Settings
+local GameSettings = _G["Settings"]
 
 local onInit = Addon.onInit
 local onLoad = Addon.onLoad
@@ -303,7 +304,7 @@ function module.getVoice()
 end
 
 function module.openSettings()
-  InterfaceOptionsFrame_OpenToCategory(__namespace)
+  GameSettings.OpenToCategory(Settings.CATEGORY_ID)
 end
 
 function module.initPlayButton(onLeftClick, onRightClick)
