@@ -397,6 +397,21 @@ function module.initSettings()
     TEXTTOSPEECH_VOLUME_MAX, 1
   )
 
+  local useNarrator = CreateFrame(
+    "CheckButton", "QuestTTSOptionsPanelUseNarrator", frame,
+    "OptionsBaseCheckButtonTemplate"
+  )
+  useNarrator:SetPoint(
+    "TOPLEFT", "QuestTTSOptionsPanelVoiceSpeed", "BOTTOMLEFT", 0, -16
+  )
+  local useNarratorText = useNarrator:CreateFontString(
+    "QuestTTSOptionsPanelUseNarratorText", "ARTWORK", "GameFontHighlightLeft"
+  )
+  useNarratorText:SetText("Use other gender voice as narrator")
+  useNarratorText:SetSize(275, 275)
+  useNarratorText:SetPoint("LEFT", useNarrator, "RIGHT", 2, 1)
+  proxyCheckSetting(Settings.useNarrator, useNarrator)
+
   frame.name = __namespace
   InterfaceOptions_AddCategory(frame)
 end

@@ -76,7 +76,7 @@ function module.init()
 
   useHook(
     "OnHide", function()
-      Main.ttsStop()
+      Main.ttsAutoStop()
     end, "secure-widget", ImmersionFrame
   )
 end

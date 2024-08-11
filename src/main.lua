@@ -21,6 +21,9 @@ local module = {}
 local isPlaying = useState(false)
 local textHistory = Array.new()
 local alertVersion = 1
+-- Some variables to use for narrated text
+local narratorTag = "narrator" -- tag to distinguish normal text from narrated one [narratorTag]nareted text[/narratorTag]
+local speechQueue = {} -- queue of text segments, segment is structured as { text: string, voiceID: integer}
 
 onInit(
   function()
@@ -51,6 +54,8 @@ onLoad(
 useEvent(
   function()
     isPlaying.set(false)
+    -- when current speech is completed try to speck next segment
+    module.processNextSpeechSegment()
   end, { "VOICE_CHAT_TTS_PLAYBACK_FINISHED", "VOICE_CHAT_TTS_PLAYBACK_FAILED" }
 )
 
@@ -155,19 +160,77 @@ function module.ttsToggle(source)
   end
 end
 
-function module.ttsPlay(text)
-  isPlaying.set(true)
+-- Function to process speechQueue waiting for previous segment to finish (without it sometimes the text segments were swaped for no reason)
+function module.processNextSpeechSegment()
+   -- Just quit if queue is empty or stil pseakinf
+  if #speechQueue == 0 or isPlaying.get() then return end
 
+  -- Start processing next segment
+  isPlaying.set(true)
+  local segment = table.remove(speechQueue, 1)
+  -- Speak the text
   C_VoiceChat.SpeakText(
-    module.getVoice().voiceID, text, Enum.VoiceTtsDestination.LocalPlayback,
+    segment.voiceID, segment.text, Enum.VoiceTtsDestination.LocalPlayback,
     Settings.voiceSpeed.get(), Settings.voiceVolume.get()
   )
 end
 
+-- Function to parse text with narratorTags and make an array of segments { text: string, voiceID: integer }
+function module.processAndSplitNarrator(text)
+  -- Split the text by [narratorTag][/narratorTag] tags and track the text
+  local toRet = {}
+  local lastPos = 1
+  local actorVoiceID = module.getVoice().voiceID
+  local narratorVoiceID = Settings.voice3.get()
+  -- Pattern to capture text outside and inside [narratorTag] tags
+  for outsideText, insideText in text:gmatch("(.-)%["..narratorTag.."%](.-)%[/"..narratorTag.."%]") do
+      -- Add text outside [narratorTag][/narratorTag] tags
+      if outsideText ~= "" then
+          table.insert(toRet, {text = outsideText, voiceID = actorVoiceID})
+      end
+      -- Add text inside [narratorTag][/narratorTag] tags
+      table.insert(toRet, {text = insideText, voiceID = narratorVoiceID})
+      -- Update lastPos to the end of the current match
+      lastPos = lastPos + #outsideText + #insideText + (#narratorTag * 2 + 5)
+  end
+  -- Capture any remaining text after the last match
+  if lastPos <= #text then
+      local remainingText = text:sub(lastPos)
+      if remainingText ~= "" then
+          table.insert(toRet, {text = remainingText, voiceID = actorVoiceID})
+      end
+  end
+  return toRet
+end
+
+function module.ttsPlay(text)
+  if Settings.useNarrator.get() then
+    -- Parse text into segments (narrated and normal)
+    local narratedText = module.processAndSplitNarrator(text)
+    for _, segment in ipairs(narratedText) do
+      -- Check if there is anything to speak and if so, insert into queue
+      if segment.text ~= nil and segment.text:match("^%s*$") == nil then
+        table.insert(speechQueue, segment)
+      end
+    end
+    -- Proccess first segment of the queue (following ones will be triggered by TTS events as mentioned above in UseEvent)
+    module.processNextSpeechSegment()
+  else
+    isPlaying.set(true)
+    C_VoiceChat.SpeakText(
+      module.getVoice().voiceID, text, Enum.VoiceTtsDestination.LocalPlayback,
+      Settings.voiceSpeed.get(), Settings.voiceVolume.get()
+    )
+  end
+end
+
 function module.ttsStop()
+  -- Empty speechQueue
+  speechQueue = {}
   C_VoiceChat.StopSpeakingText()
 end
 
+-- Add <> for any text we want to be narrated
 function module.getText(source)
   local toRet = ""
 
@@ -178,7 +241,7 @@ function module.getText(source)
     local gossip = CrossExp.getGossipText()
 
     if Settings.readNpcName.get() then
-      toRet = toRet .. "\n" .. npcName .. ":"
+      toRet = toRet .. "\n<" .. npcName .. ":>"
     end
 
     toRet = toRet .. "\n" .. gossip .. "."
@@ -187,13 +250,13 @@ function module.getText(source)
     local description, objective = GetQuestLogQuestText()
 
     if Settings.readTitle.get() then
-      toRet = toRet .. "\n" .. title .. "."
+      toRet = toRet .. "\n<" ..title .. ".>"
     end
 
     toRet = toRet .. "\n" .. description .. "."
 
     if Settings.readObjective.get() then
-      toRet = toRet .. "\n" .. objective .. "."
+      toRet = toRet .. "\n<" .. objective .. ".>"
     end
   elseif source == "quest:greeting" then
     local npcName = UnitName("npc")
@@ -201,7 +264,7 @@ function module.getText(source)
     local greeting = GetGreetingText()
 
     if Settings.readNpcName.get() then
-      toRet = toRet .. "\n" .. npcName .. ":"
+      toRet = toRet .. "\n<" .. npcName .. ":>"
     end
 
     toRet = toRet .. "\n" .. greeting .. "."
@@ -211,13 +274,13 @@ function module.getText(source)
     local objective = GetObjectiveText()
 
     if Settings.readTitle.get() then
-      toRet = toRet .. "\n" .. title .. "."
+      toRet = toRet .. "\n<" .. title .. ".>"
     end
 
     toRet = toRet .. "\n" .. description .. "."
 
     if Settings.readObjective.get() then
-      toRet = toRet .. "\n" .. objective .. "."
+      toRet = toRet .. "\n<" .. objective .. ".>"
     end
   elseif source == "quest:progress" then
     -- local title = GetTitleText()
@@ -234,7 +297,7 @@ function module.getText(source)
     local description = ItemTextGetText()
 
     if Settings.readTitle.get() then
-      toRet = toRet .. "\n" .. title .. "."
+      toRet = toRet .. "\n<" .. title .. ".>"
     end
 
     toRet = toRet .. "\n" .. description .. "."
@@ -244,7 +307,12 @@ function module.getText(source)
     toRet = toRet .. "\n" .. description .. "."
   end
 
-  toRet = toRet:gsub("<", ""):gsub(">", "")
+  if Settings.useNarrator.get() then
+    -- Replace any <...> tag with [narratorTag]...[/narratorTag]
+    toRet = toRet:gsub("<(.-)>", "["..narratorTag.."]%1[/"..narratorTag.."]")
+  else
+    toRet = toRet:gsub("<", ""):gsub(">", "")
+  end
 
   return toRet
 end
