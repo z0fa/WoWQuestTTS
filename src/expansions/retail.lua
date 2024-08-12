@@ -134,6 +134,11 @@ function module.initSettings()
   )
   GameSettings.CreateDropdown(category, voice3, getVoiceOptions, "")
 
+  local useNarrator = proxySetting(
+    category, Settings.useNarrator, "Use other gender voice as narrator"
+  )
+  GameSettings.CreateCheckbox(category, useNarrator, "Reads quest titles, npc names, objectives and text in <> using other gender voice.")
+
   local voiceSpeed =
     proxySetting(category, Settings.voiceSpeed, "Voice speed")
   local voiceSpeedOptions = GameSettings.CreateSliderOptions(
