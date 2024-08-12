@@ -89,6 +89,18 @@ function module.init()
   end);
 
   b:SetScript(
+    "OnEnter", function(self)
+      self:SetAlpha(1)
+    end
+  )
+
+  b:SetScript(
+    "OnLeave", function(self)
+      self:SetAlpha(ALPHA_UNFOCUSED)
+    end
+  )
+
+  b:SetScript(
     "OnClick", function(_, event)
       if event == "RightButton" then
         Main.openSettings()

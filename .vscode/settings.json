@@ -51,6 +51,31 @@
     "QuestFrameGreetingPanel",
     "QuestFrameProgressPanel",
     "QuestFrameRewardPanel",
-    "ItemTextGetPage"
+    "ItemTextGetPage",
+    "setmetatable",
+    "print",
+    "_G",
+    "type",
+    "table",
+    "unpack",
+    "tostring",
+    "next",
+    "ipairs",
+    "pairs",
+    "math"
+  ],
+  "Lua.runtime.builtin": {
+    "basic": "disable",
+    "debug": "disable",
+    "io": "disable",
+    "math": "disable",
+    "os": "disable",
+    "package": "disable",
+    "string": "disable",
+    "table": "disable",
+    "utf8": "disable"
+  },
+  "Lua.workspace.library": [
+    "~\\.vscode\\extensions\\ketho.wow-api-0.16.5\\Annotations"
   ]
 }
