@@ -21,5 +21,6 @@ src/expansions/legacy.lua
 
 src/addons/immersion.lua
 src/addons/autoturnin.lua
+src/addons/dialogueui.lua
 
 src/main.lua
