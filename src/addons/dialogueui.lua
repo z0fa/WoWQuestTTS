@@ -105,6 +105,7 @@ function module.init()
       if event == "RightButton" then
         Main.openSettings()
       else
+        -- print(source)
         Main.ttsToggle(source)
       end
     end
@@ -136,36 +137,41 @@ function module.init()
 
   useHook(
     "HandleGossip", function()
-      --print("gossip")
-      Main.ttsAutoPlay("gossip")
+      source = "gossip"
+      --print(source)
+      Main.ttsAutoPlay(source)
     end, "secure-function", DUIQuestFrame
   )
 
   useHook(
     "HandleQuestDetail", function()
-      --print("detail")
-      Main.ttsAutoPlay("quest:detail")
+      source = "quest:detail"
+      --print(source)
+      Main.ttsAutoPlay(source)
     end, "secure-function", DUIQuestFrame
   )
 
   useHook(
     "HandleQuestComplete", function()
-      --print("complete")
-      Main.ttsAutoPlay("quest:reward")
+      source = "quest:reward"
+      --print(source)
+      Main.ttsAutoPlay(source)
     end, "secure-function", DUIQuestFrame
   )
 
   useHook(
     "HandleQuestGreeting", function()
-      --print("greeting")
-      Main.ttsAutoPlay("quest:greeting")
+      source = "quest:greeting"
+      --print(source)
+      Main.ttsAutoPlay(source)
     end, "secure-function", DUIQuestFrame
   )
 
   useHook(
     "HandleQuestProgress", function()
-      --print("progress")
-      Main.ttsAutoPlay("quest:progress")
+      source = "quest:progress"
+      --print(source)
+      Main.ttsAutoPlay(source)
     end, "secure-function", DUIQuestFrame
   )
 end
