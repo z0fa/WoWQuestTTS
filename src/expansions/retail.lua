@@ -53,8 +53,10 @@ function module.initSettings()
     local varName = setting.varName
     local defaultValue = setting.defaultValue
 
+    local varTbl = _G[globalName]
+    local varKey = varName
     local toRet = GameSettings.RegisterAddOnSetting(
-      category, name, varName, type(defaultValue), defaultValue
+      category, varName, varKey, varTbl, type(defaultValue), name, defaultValue
     )
 
     local SetValue = toRet.SetValue
