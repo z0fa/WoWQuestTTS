@@ -58,10 +58,6 @@ function module.initSettings()
     local toRet = GameSettings.RegisterAddOnSetting(
       category, varName, varKey, varTbl, type(defaultValue), name, defaultValue
     )
-    --[[
-    local toRet = GameSettings.RegisterAddOnSetting(
-      category, name, varName, type(defaultValue), defaultValue
-    )
 
     local SetValue = toRet.SetValue
     toRet.SetValue = function(self, value, force)
@@ -71,7 +67,7 @@ function module.initSettings()
 
       return tmp
     end
-    ]]
+
     onLoad(
       function()
         toRet:SetValue(setting.get())
