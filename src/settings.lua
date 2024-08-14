@@ -22,6 +22,7 @@ local module = {
   autoStopRead = useSavedVariable(globalDB, "autoStopRead", true),
   hookAutoTurnIn = useSavedVariable(globalDB, "hookAutoTurnIn", false),
   alert = useSavedVariable(globalDB, "alert", 0),
+  useNarrator = useSavedVariable(globalDB, "useNarrator", false),
 }
 
 __module.Settings = module

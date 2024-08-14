@@ -53,8 +53,10 @@ function module.initSettings()
     local varName = setting.varName
     local defaultValue = setting.defaultValue
 
+    local varTbl = _G[globalName]
+    local varKey = varName
     local toRet = GameSettings.RegisterAddOnSetting(
-      category, name, varName, type(defaultValue), defaultValue
+      category, varName, varKey, varTbl, type(defaultValue), name, defaultValue
     )
 
     local SetValue = toRet.SetValue
@@ -133,6 +135,11 @@ function module.initSettings()
     category, Settings.voice3, "Voice for other gender npcs"
   )
   GameSettings.CreateDropdown(category, voice3, getVoiceOptions, "")
+
+  local useNarrator = proxySetting(
+    category, Settings.useNarrator, "Use other gender voice as narrator"
+  )
+  GameSettings.CreateCheckbox(category, useNarrator, "Reads quest titles, npc names, objectives and text in <> using other gender voice.")
 
   local voiceSpeed =
     proxySetting(category, Settings.voiceSpeed, "Voice speed")
