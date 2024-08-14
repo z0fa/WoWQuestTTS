@@ -4,5 +4,6 @@
     "editor.defaultFormatter": "Koihik.vscode-lua-format"
   },
   "Lua.runtime.version": "Lua 5.1",
-  "vscode-lua-format.configPath": ".vscode/lua-editor.cfg"
+  "vscode-lua-format.configPath": ".vscode/lua-editor.cfg",
+  "wowAPI.luals.defineKnownGlobals": false
 }
