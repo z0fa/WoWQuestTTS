@@ -43,7 +43,7 @@ It could be the windows TTS process not being active. Opening the "Speech" setti
 
 # Links
 
-- Demo: https://youtu.be/MdeevvKw__M
+- Demo: https://youtu.be/2d9iuRfHpEk
 - Project on Curse: https://www.curseforge.com/wow/addons/questtts
 - Project on Wago: https://addons.wago.io/addons/questtts
 - Project on GitHub: https://github.com/z0fa/WoWQuestTTS
