@@ -1,8 +1,8 @@
-## Interface: 110002
-## Interface-Classic: 11502
+## Interface: 110005
+## Interface-Classic: 11504
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30403
-## Interface-Cata: 40400
+## Interface-Cata: 40401
 ## Author: Giovanni Cavallo "z0fa"
 ## Version: @project-version@
 ## Title: QuestTTS
@@ -15,9 +15,7 @@ libs/array.lua
 libs/addon.lua
 
 src/settings.lua
-
-src/expansions/retail.lua
-src/expansions/legacy.lua
+src/crossexp.lua
 
 src/addons/immersion.lua
 src/addons/autoturnin.lua
