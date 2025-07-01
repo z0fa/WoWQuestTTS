@@ -7,96 +7,68 @@ local module = {} --- @class Addon
 local frame = CreateFrame("Frame", nil)
 local onLoadHooks = Array.new()
 local onUpdateHooks = Array.new()
-local debugValues = {} --- @type table<string, unknown>
-local listeners = {} --- @type table<WowEvent | any, Array>
-local stateData = Array.new()
+local debugValues = {} --- @type table<string, any>
+local listeners = {} --- @type table<WowEvent, Array>
 local hooks = Array.new()
-local updatePending = false
 
 --- @class ReactiveData
 --- @field get fun(): unknown
---- @field set fun(newValue: any)
---- @field ref integer
+--- @field set fun(newValue: unknown)
+--- @field sub fun(listener: fun(newValue: unknown)): fun()
 
---- @class ReactiveSavedVariable : ReactiveData
+--- @class ReactiveSavedVariable: ReactiveData
 --- @field globalName string
 --- @field varName string
 --- @field defaultValue unknown
 
 --- comment
-local function runHooks()
-  updatePending = false
-
-  hooks:forEach(
-    function(effect)
-      local deps = effect.deps
-      local fn = effect.fn
-
-      local diff = false
-
-      if deps == nil then
-        diff = true
-      elseif Array.isArray(deps) then
-        deps:forEach(
-          function(dep)
-            local oldValue = dep.val
-            local newValue = dep.get()
-
-            if oldValue ~= newValue then
-              diff = true
-              dep.val = newValue
-            end
-          end
-        )
-      end
-
-      if diff then
-        fn()
-      end
-    end
-  )
-end
-
---- comment
-local function triggerUpdate()
-  if updatePending then
-    return
-  end
-
-  updatePending = true
-  module.nextTick(runHooks)
-end
-
---- comment
---- @param value any
+--- @generic T
+--- @param initialValue T
 --- @return ReactiveData
-function module.useState(value)
-  stateData:push(value)
-
-  local stateIndex = stateData:length()
-
-  local function set(newValue)
-    stateData[stateIndex] = newValue
-    triggerUpdate()
-  end
+function module.useState(initialValue)
+  local value = initialValue
+  local subscribers = Array.new()
 
   local function get()
-    return stateData[stateIndex]
+    return value
   end
 
-  return { get = get, set = set, ref = stateIndex }
+  local function set(newValue)
+    if value == newValue then
+      return
+    end
+
+    value = newValue
+    subscribers:forEach(function(item)
+      item(value)
+    end)
+  end
+
+  local function sub(listener)
+    subscribers:push(listener)
+
+    return function()
+      subscribers = subscribers:filter(
+        function(item)
+          return item ~= listener
+        end
+      )
+    end
+  end
+
+  return { get = get, set = set, sub = sub }
 end
 
 --- comment
---- @param fn function
+--- @param fn fun()
 --- @param deps ReactiveData[]
 function module.useEffect(fn, deps)
   local toPush = { fn = fn, deps = nil }
 
   if type(deps) == "table" then
-    toPush.deps = Array.new(deps):map(
+    toPush.deps = Array.new(deps):forEach(
       function(dep)
-        return { val = nil, get = dep.get, ref = dep.ref }
+        dep.sub(fn)
       end
     )
   end
@@ -104,9 +76,8 @@ function module.useEffect(fn, deps)
   hooks:push(toPush)
 end
 
---- comment
---- @param fn function
---- @param deps ReactiveData[]
+--- @param fn fun()
+--- @param deps ReactiveData[]?
 function module.useMemo(fn, deps)
 end
 
@@ -117,7 +88,7 @@ end
 --- comment
 --- @param globalName string
 --- @param varName string
---- @param defaultValue any
+--- @param defaultValue unknown
 --- @return ReactiveSavedVariable
 function module.useSavedVariable(globalName, varName, defaultValue)
   local state = module.useState(defaultValue)
@@ -125,7 +96,7 @@ function module.useSavedVariable(globalName, varName, defaultValue)
   local toRet = {
     get = state.get,
     set = state.set,
-    ref = state.ref,
+    sub = state.sub,
     globalName = globalName,
     varName = varName,
     defaultValue = defaultValue,
@@ -153,7 +124,7 @@ function module.useSavedVariable(globalName, varName, defaultValue)
 end
 
 --- comment
---- @param fn function
+--- @param fn fun(...)
 --- @param events WowEvent[]
 --- @param once boolean?
 function module.useEvent(fn, events, once)
@@ -344,7 +315,7 @@ function module.onInit(fn)
 end
 
 --- comment
---- @param fn function
+--- @param fn fun(delta: number)
 function module.onUpdate(fn)
   onUpdateHooks:push(fn)
 
@@ -382,8 +353,6 @@ module.useEvent(
           fn()
         end
       )
-
-      triggerUpdate()
 
       module.nextTick(
         function()

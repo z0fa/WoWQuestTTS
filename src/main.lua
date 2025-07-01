@@ -42,9 +42,7 @@ onLoad(
     CrossExp.initSettings()
 
     if (alertVersion > Settings.alert.get()) then
-      print(
-        "Hello! I have a brand new settings panel, check it out from the interface menu or by right cliking the play/stop button :D"
-      )
+      -- print("...")
 
       Settings.alert.set(alertVersion)
     end
@@ -361,9 +359,7 @@ function module.getVoice()
   local voices = Array.new(C_VoiceChat.GetTtsVoices())
   local voiceToRet = voices:find(
     function(v)
-      if v.voiceID == toRet then
-        return true
-      end
+       return v.voiceID == toRet
     end
   )
 
