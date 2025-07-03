@@ -36,7 +36,11 @@ end
 
 function module.initPlayButton(buttons, factory)
   if Addon.isRetail then
-    buttons:push(factory(QuestMapFrame.DetailsFrame.BackFrame, -8, -10, "quest:focused"))
+    buttons:push(
+      factory(
+        QuestMapFrame.DetailsFrame.BackFrame, -8, -10, "quest:focused"
+      )
+    )
     buttons:push(factory(QuestFrame, -20, 0, "quest"))
     buttons:push(factory(GossipFrame, -20, 0, "gossip"))
     buttons:push(factory(ItemTextFrame, -20, 0, "book"))
@@ -71,7 +75,8 @@ function module.initSettings()
       local varTbl = _G[globalName]
       local varKey = varName
       local toRet = GameSettings.RegisterAddOnSetting(
-        category, varName, varKey, varTbl, type(defaultValue), name, defaultValue
+        category, varName, varKey, varTbl, type(defaultValue), name,
+        defaultValue
       )
 
       local SetValue = toRet.SetValue
@@ -92,7 +97,9 @@ function module.initSettings()
       return toRet
     end
 
-    local category, layout = GameSettings.RegisterVerticalLayoutCategory(__namespace)
+    local category, layout = GameSettings.RegisterVerticalLayoutCategory(
+      __namespace
+    )
     Settings.CATEGORY_ID = category:GetID()
 
     local readTitle = proxySetting(
@@ -154,7 +161,10 @@ function module.initSettings()
     local useNarrator = proxySetting(
       category, Settings.useNarrator, "Use other gender voice as narrator"
     )
-    GameSettings.CreateCheckbox(category, useNarrator, "Reads quest titles, npc names, objectives and text in <> using other gender voice.")
+    GameSettings.CreateCheckbox(
+      category, useNarrator,
+      "Reads quest titles, npc names, objectives and text in <> using other gender voice."
+    )
 
     local voiceSpeed =
       proxySetting(category, Settings.voiceSpeed, "Voice speed")
@@ -370,7 +380,8 @@ function module.initSettings()
       "TOPLEFT", "QuestTTSOptionsPanelReadTitle", "BOTTOMLEFT", 0, -8
     )
     local readObjectiveText = readObjective:CreateFontString(
-      "QuestTTSOptionsPanelReadObjectiveText", "ARTWORK", "GameFontHighlightLeft"
+      "QuestTTSOptionsPanelReadObjectiveText", "ARTWORK",
+      "GameFontHighlightLeft"
     )
     readObjectiveText:SetText("Read quest objective")
     readObjectiveText:SetSize(275, 275)
@@ -400,7 +411,8 @@ function module.initSettings()
       "TOPLEFT", "QuestTTSOptionsPanelReadNpcName", "BOTTOMLEFT", 0, -8
     )
     local skipRecentTextText = readObjective:CreateFontString(
-      "QuestTTSOptionsPanelSkipRecentTextText", "ARTWORK", "GameFontHighlightLeft"
+      "QuestTTSOptionsPanelSkipRecentTextText", "ARTWORK",
+      "GameFontHighlightLeft"
     )
     skipRecentTextText:SetText("Skip recently played text")
     skipRecentTextText:SetSize(275, 275)
@@ -415,7 +427,8 @@ function module.initSettings()
       "TOPLEFT", "QuestTTSOptionsPanelSubText", "BOTTOMLEFT", 300, -8
     )
     local autoReadQuestText = autoReadQuest:CreateFontString(
-      "QuestTTSOptionsPanelAutoReadQuestText", "ARTWORK", "GameFontHighlightLeft"
+      "QuestTTSOptionsPanelAutoReadQuestText", "ARTWORK",
+      "GameFontHighlightLeft"
     )
     autoReadQuestText:SetText("Auto read quest text")
     autoReadQuestText:SetSize(275, 275)
@@ -430,7 +443,8 @@ function module.initSettings()
       "TOPLEFT", "QuestTTSOptionsPanelAutoReadQuest", "BOTTOMLEFT", 0, -8
     )
     local autoReadGossipText = autoReadGossip:CreateFontString(
-      "QuestTTSOptionsPanelAutoReadGossipText", "ARTWORK", "GameFontHighlightLeft"
+      "QuestTTSOptionsPanelAutoReadGossipText", "ARTWORK",
+      "GameFontHighlightLeft"
     )
     autoReadGossipText:SetText("Auto read gossip text")
     autoReadGossipText:SetSize(275, 275)
@@ -462,7 +476,8 @@ function module.initSettings()
       "TOPLEFT", "QuestTTSOptionsPanelAutoStopRead", "BOTTOMLEFT", 0, -8
     )
     local hookAutoTurnInText = readObjective:CreateFontString(
-      "QuestTTSOptionsPanelHookAutoTurnInText", "ARTWORK", "GameFontHighlightLeft"
+      "QuestTTSOptionsPanelHookAutoTurnInText", "ARTWORK",
+      "GameFontHighlightLeft"
     )
     hookAutoTurnInText:SetText(
       "Enable experimental AutoTurnIn integration (requires reload)"
@@ -536,7 +551,8 @@ function module.initSettings()
     )
 
     local voiceVolume = CreateFrame(
-      "Slider", "QuestTTSOptionsPanelVoiceVolume", frame, "OptionsSliderTemplate"
+      "Slider", "QuestTTSOptionsPanelVoiceVolume", frame,
+      "OptionsSliderTemplate"
     )
     voiceVolume:SetSize(235, 17)
     voiceVolume:SetPoint(

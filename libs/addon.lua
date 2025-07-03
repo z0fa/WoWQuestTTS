@@ -22,8 +22,7 @@ local hooks = Array.new()
 --- @field defaultValue unknown
 
 --- comment
---- @generic T
---- @param initialValue T
+--- @param initialValue unknown
 --- @return ReactiveData
 function module.useState(initialValue)
   local value = initialValue
@@ -39,9 +38,11 @@ function module.useState(initialValue)
     end
 
     value = newValue
-    subscribers:forEach(function(item)
-      item(value)
-    end)
+    subscribers:forEach(
+      function(item)
+        item(value)
+      end
+    )
   end
 
   local function sub(listener)
@@ -131,7 +132,8 @@ function module.useEvent(fn, events, once)
   local eventsArray = Array.new(events or {})
   once = once or false
 
-  local function unsub() end
+  local function unsub()
+  end
 
   local function handler(...)
     local result = fn(...)
@@ -207,7 +209,8 @@ function module.useHook(fnName, fn, hookType, srcTable, once)
   hookType = hookType or "function"
   srcTable = srcTable or _G
 
-  local function unhook () end
+  local function unhook()
+  end
 
   local enabled = true
   local oldFn = nil

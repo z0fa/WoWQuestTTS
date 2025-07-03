@@ -160,8 +160,10 @@ end
 
 -- Function to process speechQueue waiting for previous segment to finish (without it sometimes the text segments were swaped for no reason)
 function module.processNextSpeechSegment()
-   -- Just quit if queue is empty or stil pseakinf
-  if #speechQueue == 0 or isPlaying.get() then return end
+  -- Just quit if queue is empty or stil pseakinf
+  if #speechQueue == 0 or isPlaying.get() then
+    return
+  end
   -- Start processing next segment
   isPlaying.set(true)
   local segment = table.remove(speechQueue, 1)
@@ -178,22 +180,24 @@ function module.processAndSplitNarrator(text, actorVoiceID, narratorVoiceID)
   local toRet = {}
   local lastPos = 1
   -- Pattern to capture text outside and inside [narratorTag] tags
-  for outsideText, insideText in text:gmatch("(.-)%["..narratorTag.."%](.-)%[/"..narratorTag.."%]") do
-      -- Add text outside [narratorTag][/narratorTag] tags
-      if outsideText ~= "" then
-          table.insert(toRet, {text = outsideText, voiceID = actorVoiceID})
-      end
-      -- Add text inside [narratorTag][/narratorTag] tags
-      table.insert(toRet, {text = insideText, voiceID = narratorVoiceID})
-      -- Update lastPos to the end of the current match
-      lastPos = lastPos + #outsideText + #insideText + (#narratorTag * 2 + 5)
+  for outsideText, insideText in text:gmatch(
+    "(.-)%[" .. narratorTag .. "%](.-)%[/" .. narratorTag .. "%]"
+  ) do
+    -- Add text outside [narratorTag][/narratorTag] tags
+    if outsideText ~= "" then
+      table.insert(toRet, { text = outsideText, voiceID = actorVoiceID })
+    end
+    -- Add text inside [narratorTag][/narratorTag] tags
+    table.insert(toRet, { text = insideText, voiceID = narratorVoiceID })
+    -- Update lastPos to the end of the current match
+    lastPos = lastPos + #outsideText + #insideText + (#narratorTag * 2 + 5)
   end
   -- Capture any remaining text after the last match
   if lastPos <= #text then
-      local remainingText = text:sub(lastPos)
-      if remainingText ~= "" then
-          table.insert(toRet, {text = remainingText, voiceID = actorVoiceID})
-      end
+    local remainingText = text:sub(lastPos)
+    if remainingText ~= "" then
+      table.insert(toRet, { text = remainingText, voiceID = actorVoiceID })
+    end
   end
   return toRet
 end
@@ -203,7 +207,9 @@ function module.ttsPlay(text)
     -- Parse text into segments (narrated and normal)
     local actorVoiceID = module.getVoice().voiceID
     local narratorVoiceID = Settings.voice3.get()
-    local narratedText = module.processAndSplitNarrator(text, actorVoiceID, narratorVoiceID)
+    local narratedText = module.processAndSplitNarrator(
+      text, actorVoiceID, narratorVoiceID
+    )
     for _, segment in ipairs(narratedText) do
       -- Check if there is anything to speak and if so, insert into queue
       if segment.text ~= nil and segment.text:match("^%s*$") == nil then
@@ -247,7 +253,7 @@ function module.getText(source)
     local description, objective = GetQuestLogQuestText()
 
     if Settings.readTitle.get() then
-      toRet = toRet .. "\n<" ..title .. ".>"
+      toRet = toRet .. "\n<" .. title .. ".>"
     end
 
     toRet = toRet .. "\n" .. description .. "."
@@ -306,7 +312,9 @@ function module.getText(source)
 
   if Settings.useNarrator.get() then
     -- Replace any <...> tag with [narratorTag]...[/narratorTag]
-    toRet = toRet:gsub("<(.-)>", "["..narratorTag.."]%1[/"..narratorTag.."]")
+    toRet = toRet:gsub(
+      "<(.-)>", "[" .. narratorTag .. "]%1[/" .. narratorTag .. "]"
+    )
   else
     toRet = toRet:gsub("<", ""):gsub(">", "")
   end
@@ -359,7 +367,7 @@ function module.getVoice()
   local voices = Array.new(C_VoiceChat.GetTtsVoices())
   local voiceToRet = voices:find(
     function(v)
-       return v.voiceID == toRet
+      return v.voiceID == toRet
     end
   )
 

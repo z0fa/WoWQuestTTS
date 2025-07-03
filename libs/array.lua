@@ -85,7 +85,27 @@ function module:at(index)
   return self[index]
 end
 
-function module:concat()
+--- comment
+--- @param ... any
+--- @return Array
+function module:concat(...)
+  local toRet = module.new()
+
+  for i = 1, #self do
+    toRet:push(self[i])
+  end
+
+  for _, arg in ipairs({ ... }) do
+    if module.isArray(arg) then
+      for i = 1, #arg do
+        toRet:push(arg[i])
+      end
+    else
+      toRet:push(arg)
+    end
+  end
+
+  return toRet
 end
 
 function module:copyWithin()
@@ -177,10 +197,36 @@ end
 function module:indexOf()
 end
 
-function module:join()
+--- comment
+--- @param sep? string
+--- @return string
+function module:join(sep)
+  sep = sep or ","
+
+  local toRet = ""
+
+  for i = 1, #self do
+    local v = self[i] or ""
+    toRet = toRet .. tostring(v)
+
+    if i < #self then
+      toRet = toRet .. sep
+    end
+  end
+
+  return toRet
 end
 
+--- comment
+--- @return Array
 function module:keys()
+  local toRet = module.new()
+
+  for i = 1, #self do
+    toRet:push(i)
+  end
+
+  return toRet
 end
 
 --- comment
