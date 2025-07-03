@@ -72,6 +72,7 @@ function module.useEffect(fn, deps)
         dep.sub(fn)
       end
     )
+    -- module.onLoad(fn)
   end
 
   hooks:push(toPush)
