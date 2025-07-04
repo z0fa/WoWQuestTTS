@@ -39,7 +39,6 @@ onInit(
 onLoad(
   function()
     module.initPlayButton(module.ttsToggle, module.openSettings)
-    CrossExp.initSettings()
 
     if (alertVersion > Settings.alert.get()) then
       -- print("...")
