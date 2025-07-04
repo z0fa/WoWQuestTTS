@@ -46,15 +46,15 @@ function module.initPlayButton(buttons, factory)
     buttons:push(factory(ItemTextFrame, -20, 0, "book"))
   else
     buttons:push(factory(QuestFrame, -54, -20, "quest"))
-    buttons:push(factory(QuestLogFrame, -24, -13, "quest:focused"))
-    buttons:push(factory(QuestLogDetailFrame, -24, -13, "quest:focused"))
+    buttons:push(factory(QuestLogFrame, -56, -13, "quest:focused"))
+    -- buttons:push(factory(QuestLogDetailFrame, -24, -13, "quest:focused"))
     buttons:push(factory(GossipFrame, -54, -20, "gossip"))
     buttons:push(factory(ItemTextFrame, -55, -14, "book"))
   end
 end
 
 function module.initSettings()
-  if Addon.isRetail or Addon.isCata then
+  if Addon.isRetail or Addon.isCata or Addon.isClassic then
     local function getVoiceOptions()
       local toRet = GameSettings.CreateControlTextContainer()
 
