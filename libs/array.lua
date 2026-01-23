@@ -252,6 +252,8 @@ function module:push(...)
   for i, v in ipairs({ ... }) do
     table.insert(self, v)
   end
+
+  return #self
 end
 
 --- comment
@@ -276,6 +278,10 @@ function module:reduceRight()
 end
 
 function module:reverse()
+  local len = #self
+  for i = 1, math.floor(len / 2) do
+    self[i], self[len - i + 1] = self[len - i + 1], self[i]
+  end
 end
 
 function module:shift()
@@ -287,15 +293,15 @@ end
 ---@param to? number
 ---@return Array
 function module:slice(from, to)
-  from = from or 0
-  to = to or #self
+  local len = #self
+
+  from = math.max(1, from or 1)
+  to = math.min(len, to or len)
 
   local toRet = module.new()
-
-  for i = from, to, 1 do
+  for i = from, to do
     toRet:push(self[i])
   end
-
   return toRet
 end
 

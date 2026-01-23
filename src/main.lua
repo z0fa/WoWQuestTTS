@@ -80,13 +80,13 @@ useGossipUpdateHook(
   end
 )
 useHook(
-  "OnHide", function()
+  function()
     module.ttsAutoStop()
-  end, "secure-widget", GossipFrame
+  end, "OnHide", "secure-widget", GossipFrame
 )
 
 useHook(
-  "OnEvent", function(self, frame, event)
+  function(self, frame, event)
     if not frame:IsShown() then
       return
     end
@@ -100,12 +100,12 @@ useHook(
     elseif event == "QUEST_COMPLETE" then
       module.ttsAutoPlay("quest:reward")
     end
-  end, "secure-widget", QuestFrame
+  end, "OnEvent", "secure-widget", QuestFrame
 )
 useHook(
-  "OnHide", function()
+  function()
     module.ttsAutoStop()
-  end, "secure-widget", QuestFrame
+  end, "OnHide", "secure-widget", QuestFrame
 )
 
 function module.ttsAutoPlay(source)
@@ -168,8 +168,8 @@ function module.processNextSpeechSegment()
   local segment = table.remove(speechQueue, 1)
   -- Speak the text
   C_VoiceChat.SpeakText(
-    segment.voiceID, segment.text, Enum.VoiceTtsDestination.LocalPlayback,
-    Settings.voiceSpeed.get(), Settings.voiceVolume.get()
+    segment.voiceID, segment.text, Settings.voiceSpeed.get(),
+    Settings.voiceVolume.get()
   )
 end
 
@@ -220,8 +220,8 @@ function module.ttsPlay(text)
   else
     isPlaying.set(true)
     C_VoiceChat.SpeakText(
-      module.getVoice().voiceID, text, Enum.VoiceTtsDestination.LocalPlayback,
-      Settings.voiceSpeed.get(), Settings.voiceVolume.get()
+      module.getVoice().voiceID, text, Settings.voiceSpeed.get(),
+      Settings.voiceVolume.get()
     )
   end
 end

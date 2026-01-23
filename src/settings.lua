@@ -48,8 +48,7 @@ function module.init()
     local varTbl = _G[globalName]
     local varKey = varName
     local toRet = GameSettings.RegisterAddOnSetting(
-      category, varName, varKey, varTbl, type(defaultValue), name,
-      defaultValue
+      category, varName, varKey, varTbl, type(defaultValue), name, defaultValue
     )
 
     local SetValue = toRet.SetValue
@@ -75,9 +74,7 @@ function module.init()
   )
   module.CATEGORY_ID = category:GetID()
 
-  local readTitle = proxySetting(
-    category, module.readTitle, "Read quest title"
-  )
+  local readTitle = proxySetting(category, module.readTitle, "Read quest title")
   GameSettings.CreateCheckbox(category, readTitle, "")
 
   local readObjective = proxySetting(
@@ -85,9 +82,8 @@ function module.init()
   )
   GameSettings.CreateCheckbox(category, readObjective, "")
 
-  local readNpcName = proxySetting(
-    category, module.readNpcName, "Read npc name"
-  )
+  local readNpcName =
+    proxySetting(category, module.readNpcName, "Read npc name")
   GameSettings.CreateCheckbox(category, readNpcName, "")
 
   local autoReadQuest = proxySetting(
@@ -117,13 +113,10 @@ function module.init()
   )
   GameSettings.CreateCheckbox(category, hookAutoTurnIn, "")
 
-  local voice1 =
-    proxySetting(category, module.voice1, "Voice for male npcs")
+  local voice1 = proxySetting(category, module.voice1, "Voice for male npcs")
   GameSettings.CreateDropdown(category, voice1, getVoiceOptions, "")
 
-  local voice2 = proxySetting(
-    category, module.voice2, "Voice for female npcs"
-  )
+  local voice2 = proxySetting(category, module.voice2, "Voice for female npcs")
   GameSettings.CreateDropdown(category, voice2, getVoiceOptions, "")
 
   local voice3 = proxySetting(
@@ -139,8 +132,7 @@ function module.init()
     "Reads quest titles, npc names, objectives and text in <> using other gender voice."
   )
 
-  local voiceSpeed =
-    proxySetting(category, module.voiceSpeed, "Voice speed")
+  local voiceSpeed = proxySetting(category, module.voiceSpeed, "Voice speed")
   local voiceSpeedOptions = GameSettings.CreateSliderOptions(
     TEXTTOSPEECH_RATE_MIN, TEXTTOSPEECH_RATE_MAX, 1
   )
@@ -156,9 +148,7 @@ function module.init()
   )
   GameSettings.CreateSlider(category, voiceSpeed, voiceSpeedOptions, "")
 
-  local voiceVolume = proxySetting(
-    category, module.voiceVolume, "Voice volume"
-  )
+  local voiceVolume = proxySetting(category, module.voiceVolume, "Voice volume")
   local voiceVolumeOptions = GameSettings.CreateSliderOptions(
     TEXTTOSPEECH_VOLUME_MIN, TEXTTOSPEECH_VOLUME_MAX, 1
   )
@@ -172,8 +162,10 @@ function module.init()
   GameSettings.RegisterAddOnCategory(category)
 end
 
-onLoad(function ()
-  module.init()
-end)
+onLoad(
+  function()
+    module.init()
+  end
+)
 
 __module.Settings = module

@@ -21,6 +21,12 @@ local hooks = Array.new()
 --- @field varName string
 --- @field defaultValue unknown
 
+--- @class EventContext
+--- @field unsub fun()
+
+--- @class HookContext
+--- @field unhook fun()
+
 --- comment
 --- @param initialValue unknown
 --- @return ReactiveData
@@ -127,27 +133,22 @@ function module.useSavedVariable(globalName, varName, defaultValue)
 end
 
 --- comment
---- @param fn fun(...)
+--- @param fn fun(context: EventContext, eventName: string, ...)
 --- @param events WowEvent[]
---- @param once boolean?
-function module.useEvent(fn, events, once)
+--- @return EventContext
+function module.useEvent(fn, events)
   local eventsArray = Array.new(events or {})
-  once = once or false
 
-  local function unsub()
-  end
+  local context = {
+    unsub = function()
+    end,
+  }
 
   local function handler(...)
-    local result = fn(...)
-
-    if once then
-      unsub()
-    end
-
-    return result
+    return fn(context, ...)
   end
 
-  unsub = function()
+  context.unsub = function()
     eventsArray:forEach(
       function(event)
         listeners[event] = listeners[event]:filter(
@@ -174,7 +175,7 @@ function module.useEvent(fn, events, once)
     end
   )
 
-  return unsub
+  return context
 end
 
 --- comment
@@ -202,26 +203,26 @@ function module.useSlashCmd(fn, aliases)
 end
 
 --- comment
+--- @param fn fun(context: HookContext, ...)
 --- @param fnName string
---- @param fn function
 --- @param hookType? "function" | "secure-function" | "widget" | "secure-widget"
 --- @param srcTable? table
---- @param once? boolean
-function module.useHook(fnName, fn, hookType, srcTable, once)
+--- @return HookContext
+function module.useHook(fn, fnName, hookType, srcTable)
   hookType = hookType or "function"
   srcTable = srcTable or _G
-
-  local function unhook()
-  end
 
   local enabled = true
   local oldFn = nil
   local hookProxy = {}
-  local hookFn = function(...)
-    if once then
-      unhook()
-    end
 
+  local context = {
+    unhook = function()
+      enabled = false
+    end,
+  }
+
+  local hookFn = function(...)
     return hookProxy(...)
   end
 
@@ -234,7 +235,7 @@ function module.useHook(fnName, fn, hookType, srcTable, once)
           return
         end
 
-        return fn(...)
+        return fn(context, ...)
       end,
       __index = function(t, k)
         if k == "__enabled" then
@@ -263,10 +264,6 @@ function module.useHook(fnName, fn, hookType, srcTable, once)
     }
   )
 
-  unhook = function()
-    enabled = false
-  end
-
   if hookType == "function" then
     oldFn = srcTable[fnName]
     srcTable[fnName] = hookFn
@@ -281,7 +278,7 @@ function module.useHook(fnName, fn, hookType, srcTable, once)
     srcTable:HookScript(fnName, hookFn)
   end
 
-  return unhook
+  return context
 end
 
 --- comment
@@ -351,7 +348,7 @@ frame:SetScript(
 )
 
 module.useEvent(
-  function(evetName, addonName)
+  function(context, eventName, addonName)
     if addonName == __namespace then
       onLoadHooks:forEach(
         function(fn)

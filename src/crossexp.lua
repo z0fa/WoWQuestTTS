@@ -28,7 +28,7 @@ function module.getQuestLogTitle()
 end
 
 function module.useGossipUpdateHook(fn)
-  useHook("Update", fn, "secure-function", GossipFrame)
+  useHook(fn, "Update", "secure-function", GossipFrame)
 end
 
 function module.initPlayButton(buttons, factory)

@@ -1,12 +1,8 @@
-## Interface-Classic: 11506, 11507
-## Interface-BCC: 20504
-## Interface-Wrath: 30404
-## Interface-Cata: 40402, 40401
-## Interface-Mists: 50500
-## Interface: 110105, 110107, 110200
+## Interface: 120001, 120000, 110207, 50503, 30405, 20505, 11508
 ## Author: Giovanni Cavallo "z0fa"
 ## Version: @project-version@
 ## Title: QuestTTS
+## IconTexture: Interface\AddOns\QuestTTS\icon.jpg
 ## SavedVariables: QuestTTSGlobalDB
 ## SavedVariablesPerCharacter: QuestTTSCharacterDB
 ## X-Wago-ID: 7nGv2eGx

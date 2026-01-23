@@ -1,6 +1,6 @@
 # Quest TTS
 
-World of Warcraft addon that use the 9.1 TTS api to read quests text (out loud), right click on the play button to open the settings.
+A World of Warcraft addon that uses the 9.1 TTS API to read quest text aloud. Right-click the play button to access the settings.
 
 # Commands
 
@@ -12,7 +12,7 @@ World of Warcraft addon that use the 9.1 TTS api to read quests text (out loud),
 
 ### How can I add additional voices?
 
-The add-on already lists all the installed voices in the system, if you manage to find some free third party voices you can try to install them and if they are compatible they should appear in the list. Unfortunately the availability of the voices is something out of the scope of the add-on.
+The add-on automatically lists all voices installed on your system. If you find free third-party voices, you can try installing them. If they are compatible, they should appear in the list. Please note that the availability of voices is beyond the scope of this add-on.
 
 > For anyone who would like to use Natural voices (those used by Windows Narrator), check [this](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter)
 >
@@ -28,7 +28,7 @@ The add-on already lists all the installed voices in the system, if you manage t
 
 ### The TTS randomly stops working
 
-It could be the windows TTS process not being active. Opening the "Speech" settings in Windows should fix the problem (credits: BiktiBikti)
+This may happen if the Windows TTS process is not active. Opening the "Speech" settings in Windows should fix the problem. (credits: BiktiBikti)
 
 # Credits
 

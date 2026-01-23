@@ -52,7 +52,7 @@ function module.init()
   )
 
   useHook(
-    "UpdateTalkingHead",
+
     function(self, frame, title, text, npcType, explicitUnit, isToastPlayback)
       if npcType:find("GossipGossip") then
         source = "gossip"
@@ -71,13 +71,13 @@ function module.init()
       if not npcType:find("GossipGossip") then
         Main.ttsAutoPlay(source)
       end
-    end, "secure-function", ImmersionFrame
+    end, "UpdateTalkingHead", "secure-function", ImmersionFrame
   )
 
   useHook(
-    "OnHide", function()
+    function()
       Main.ttsAutoStop()
-    end, "secure-widget", ImmersionFrame
+    end, "OnHide", "secure-widget", ImmersionFrame
   )
 end
 

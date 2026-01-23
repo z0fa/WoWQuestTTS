@@ -27,10 +27,10 @@ function module.init()
     )
   end
 
-  useHook("QUEST_GREETING", deferAction, "function", frame)
-  useHook("GOSSIP_SHOW", deferAction, "function", frame)
-  useHook("QUEST_DETAIL", deferAction, "function", frame)
-  useHook("GOSSIP_SHOW", deferAction, "function", frame)
+  useHook(deferAction, "QUEST_GREETING", "function", frame)
+  useHook(deferAction, "GOSSIP_SHOW", "function", frame)
+  useHook(deferAction, "QUEST_DETAIL", "function", frame)
+  useHook(deferAction, "GOSSIP_SHOW", "function", frame)
 end
 
 onLoad(
