@@ -54,11 +54,7 @@ function module.useSavedVariable(globalName, varName, defaultValue)
         _G[globalName][varName] = defaultValue
       end
 
-      -- toRet.value = _G[globalName][varName]
-      print(
-        "globalName:", globalName, "varName:", varName, "value:",
-        _G[globalName][varName]
-      )
+      toRet.value = _G[globalName][varName]
     end
   )
 

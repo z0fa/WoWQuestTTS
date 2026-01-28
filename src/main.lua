@@ -40,11 +40,12 @@ onLoad(
   function()
     module.initPlayButton(module.ttsToggle, module.openSettings)
 
-    if (alertVersion > Settings.alert.value) then
-      -- print("...")
+    Settings.alert.value = alertVersion
+    -- if (alertVersion > Settings.alert.value) then
+    --   print("...")
 
-      Settings.alert.value = alertVersion
-    end
+    --   Settings.alert.value = alertVersion
+    -- end
   end
 )
 
