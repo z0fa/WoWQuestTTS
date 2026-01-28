@@ -1,5 +1,4 @@
 local __namespace, __module = ...
-
 local Addon = __module.Addon --- @class Addon
 local Settings = __module.Settings
 
@@ -11,11 +10,11 @@ local module = {}
 function module.init()
   local frame = AutoTurnIn
 
-  if not frame or not Settings.hookAutoTurnIn.get() then
+  if not frame or not Settings.hookAutoTurnIn.value then
     return
   end
 
-  Settings.autoStopRead.set(false)
+  Settings.autoStopRead.value = false
 
   local function deferAction(self, ...)
     local args = { ... }

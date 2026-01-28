@@ -1,15 +1,15 @@
 local __namespace, __module = ...
-
 local Array = __module.Array --- @class Array
+local Reactivity = __module.Reactivity --- @class Reactivity
 local Addon = __module.Addon --- @class Addon
 local CrossExp = __module.CrossExp --- @class Addon
 local Settings = __module.Settings
 local GameSettings = _G["Settings"]
 
+local ref = Reactivity.ref
+local watch = Reactivity.watch
 local onInit = Addon.onInit
 local onLoad = Addon.onLoad
-local useState = Addon.useState
-local useEffect = Addon.useEffect
 local useEvent = Addon.useEvent
 local useSlashCmd = Addon.useSlashCmd
 local useHook = Addon.useHook
@@ -18,7 +18,7 @@ local useGossipUpdateHook = CrossExp.useGossipUpdateHook
 
 local module = {}
 
-local isPlaying = useState(false)
+local isPlaying = ref(false)
 local textHistory = Array.new()
 local alertVersion = 1
 -- Some variables to use for narrated text
@@ -40,17 +40,17 @@ onLoad(
   function()
     module.initPlayButton(module.ttsToggle, module.openSettings)
 
-    if (alertVersion > Settings.alert.get()) then
+    if (alertVersion > Settings.alert.value) then
       -- print("...")
 
-      Settings.alert.set(alertVersion)
+      Settings.alert.value = alertVersion
     end
   end
 )
 
 useEvent(
   function()
-    isPlaying.set(false)
+    isPlaying.value = false
     -- when current speech is completed try to speck next segment
     module.processNextSpeechSegment()
   end, { "VOICE_CHAT_TTS_PLAYBACK_FINISHED", "VOICE_CHAT_TTS_PLAYBACK_FAILED" }
@@ -109,13 +109,13 @@ useHook(
 )
 
 function module.ttsAutoPlay(source)
-  if source:find("quest") and not Settings.autoReadQuest.get() then
+  if source:find("quest") and not Settings.autoReadQuest.value then
     return
-  elseif source:find("gossip") and not Settings.autoReadGossip.get() then
+  elseif source:find("gossip") and not Settings.autoReadGossip.value then
     return
   end
 
-  if isPlaying.get() then
+  if isPlaying.value then
     module.ttsAutoStop()
   end
 
@@ -130,7 +130,7 @@ function module.ttsAutoPlay(source)
   textHistory:unshift(text)
   textHistory = textHistory:slice(1, 10)
 
-  if isRecentText and Settings.skipRecentText.get() then
+  if isRecentText and Settings.skipRecentText.value then
     return
   end
 
@@ -142,7 +142,7 @@ function module.ttsAutoPlay(source)
 end
 
 function module.ttsAutoStop()
-  if not Settings.autoStopRead.get() then
+  if not Settings.autoStopRead.value then
     return
   end
 
@@ -150,7 +150,7 @@ function module.ttsAutoStop()
 end
 
 function module.ttsToggle(source)
-  if isPlaying.get() then
+  if isPlaying.value then
     module.ttsStop()
   else
     module.ttsPlay(module.getText(source))
@@ -160,16 +160,16 @@ end
 -- Function to process speechQueue waiting for previous segment to finish (without it sometimes the text segments were swaped for no reason)
 function module.processNextSpeechSegment()
   -- Just quit if queue is empty or stil pseakinf
-  if #speechQueue == 0 or isPlaying.get() then
+  if #speechQueue == 0 or isPlaying.value then
     return
   end
   -- Start processing next segment
-  isPlaying.set(true)
+  isPlaying.value = true
   local segment = table.remove(speechQueue, 1)
   -- Speak the text
-  C_VoiceChat.SpeakText(
-    segment.voiceID, segment.text, Settings.voiceSpeed.get(),
-    Settings.voiceVolume.get()
+  CrossExp.speakText(
+    segment.voiceID, segment.text, Settings.voiceSpeed.value,
+    Settings.voiceVolume.value
   )
 end
 
@@ -202,10 +202,10 @@ function module.processAndSplitNarrator(text, actorVoiceID, narratorVoiceID)
 end
 
 function module.ttsPlay(text)
-  if Settings.useNarrator.get() then
+  if Settings.useNarrator.value then
     -- Parse text into segments (narrated and normal)
     local actorVoiceID = module.getVoice().voiceID
-    local narratorVoiceID = Settings.voice3.get()
+    local narratorVoiceID = Settings.voice3.value
     local narratedText = module.processAndSplitNarrator(
       text, actorVoiceID, narratorVoiceID
     )
@@ -218,10 +218,10 @@ function module.ttsPlay(text)
     -- Proccess first segment of the queue (following ones will be triggered by TTS events as mentioned above in UseEvent)
     module.processNextSpeechSegment()
   else
-    isPlaying.set(true)
-    C_VoiceChat.SpeakText(
-      module.getVoice().voiceID, text, Settings.voiceSpeed.get(),
-      Settings.voiceVolume.get()
+    isPlaying.value = true
+    CrossExp.speakText(
+      module.getVoice().voiceID, text, Settings.voiceSpeed.value,
+      Settings.voiceVolume.value
     )
   end
 end
@@ -242,7 +242,7 @@ function module.getText(source)
     local npcName = UnitName("npc")
     local gossip = CrossExp.getGossipText()
 
-    if Settings.readNpcName.get() then
+    if Settings.readNpcName.value then
       toRet = toRet .. "\n<" .. npcName .. ":>"
     end
 
@@ -251,13 +251,13 @@ function module.getText(source)
     local title = CrossExp.getQuestLogTitle()
     local description, objective = GetQuestLogQuestText()
 
-    if Settings.readTitle.get() then
+    if Settings.readTitle.value then
       toRet = toRet .. "\n<" .. title .. ".>"
     end
 
     toRet = toRet .. "\n" .. description .. "."
 
-    if Settings.readObjective.get() then
+    if Settings.readObjective.value then
       toRet = toRet .. "\n<" .. objective .. ".>"
     end
   elseif source == "quest:greeting" then
@@ -265,7 +265,7 @@ function module.getText(source)
     -- local title = GetTitleText()
     local greeting = GetGreetingText()
 
-    if Settings.readNpcName.get() then
+    if Settings.readNpcName.value then
       toRet = toRet .. "\n<" .. npcName .. ":>"
     end
 
@@ -275,13 +275,13 @@ function module.getText(source)
     local description = GetQuestText()
     local objective = GetObjectiveText()
 
-    if Settings.readTitle.get() then
+    if Settings.readTitle.value then
       toRet = toRet .. "\n<" .. title .. ".>"
     end
 
     toRet = toRet .. "\n" .. description .. "."
 
-    if Settings.readObjective.get() then
+    if Settings.readObjective.value then
       toRet = toRet .. "\n<" .. objective .. ".>"
     end
   elseif source == "quest:progress" then
@@ -298,7 +298,7 @@ function module.getText(source)
     local title = ItemTextGetItem()
     local description = ItemTextGetText()
 
-    if Settings.readTitle.get() then
+    if Settings.readTitle.value then
       toRet = toRet .. "\n<" .. title .. ".>"
     end
 
@@ -309,7 +309,7 @@ function module.getText(source)
     toRet = toRet .. "\n" .. description .. "."
   end
 
-  if Settings.useNarrator.get() then
+  if Settings.useNarrator.value then
     -- Replace any <...> tag with [narratorTag]...[/narratorTag]
     toRet = toRet:gsub(
       "<(.-)>", "[" .. narratorTag .. "]%1[/" .. narratorTag .. "]"
@@ -352,15 +352,15 @@ function module.guessSource(source)
 end
 
 function module.getVoice()
-  local toRet = Settings.voice1.get()
+  local toRet = Settings.voice1.value
   local unitSex = UnitSex("questnpc") or UnitSex("npc")
 
   if unitSex == 2 then -- male
-    toRet = Settings.voice1.get()
+    toRet = Settings.voice1.value
   elseif unitSex == 3 then -- female
-    toRet = Settings.voice2.get()
+    toRet = Settings.voice2.value
   else
-    toRet = Settings.voice3.get()
+    toRet = Settings.voice3.value
   end
 
   local voices = Array.new(C_VoiceChat.GetTtsVoices())
@@ -407,9 +407,9 @@ function module.initPlayButton(onLeftClick, onRightClick)
 
   CrossExp.initPlayButton(buttons, factory)
 
-  useEffect(
-    function()
-      if isPlaying.get() then
+  watch(
+    { isPlaying }, function(newValue, oldValue)
+      if newValue then
         buttons:forEach(
           (function(button)
             button:SetNormalTexture("Interface\\TimeManager\\PauseButton")
@@ -424,7 +424,7 @@ function module.initPlayButton(onLeftClick, onRightClick)
           end)
         )
       end
-    end, { isPlaying }
+    end
   )
 end
 

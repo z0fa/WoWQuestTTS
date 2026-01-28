@@ -9,6 +9,7 @@
 ## X-Curse-Project-ID: 504658
 
 libs/array.lua
+libs/reactivity.lua
 libs/addon.lua
 
 src/settings.lua

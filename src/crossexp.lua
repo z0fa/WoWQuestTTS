@@ -1,5 +1,4 @@
 local __namespace, __module = ...
-
 local Addon = __module.Addon --- @class Addon
 local Array = __module.Array --- @class Array
 
@@ -29,6 +28,17 @@ end
 
 function module.useGossipUpdateHook(fn)
   useHook(fn, "Update", "secure-function", GossipFrame)
+end
+
+function module.speakText(voiceId, text, speed, volume)
+  if Addon.isRetail then
+    C_VoiceChat.SpeakText(voiceId, text, speed, volume)
+  else
+    C_VoiceChat.SpeakText(
+      voiceId, text, Enum.VoiceTtsDestination.LocalPlayback, speed, volume
+    )
+  end
+
 end
 
 function module.initPlayButton(buttons, factory)

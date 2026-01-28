@@ -6,10 +6,20 @@ local module = {} --- @class Array
 --- @param newValue? table | number
 --- @return Array
 function module.new(newValue)
-  local toRet = {}
+  local toRet = setmetatable(
+    {}, {
+      __index = function(_, key)
+        if key == "__isArray" then
+          return true
+        else
+          return module[key]
+        end
+      end,
+      __newindex = function(_, key, value)
 
-  toRet.__isArray = true
-  setmetatable(toRet, { __index = module })
+      end,
+    }
+  )
 
   if type(newValue) == "table" then
     for k, v in pairs(newValue) do
@@ -46,7 +56,7 @@ end
 
 --- comment
 --- @param value Array | string | table
---- @param mapFn fun(element: unknown, index: integer, array: Array)
+--- @param mapFn? fun(element: unknown, index: integer, array: Array)
 --- @return Array
 function module:from(value, mapFn)
   local toRet = module.new()

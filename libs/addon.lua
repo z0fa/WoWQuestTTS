@@ -1,115 +1,50 @@
 local __namespace, __module = ...
-
 local Array = __module.Array --- @class Array
+local Reactivity = __module.Reactivity --- @class Reactivity
+local ref = Reactivity.ref
+local watch = Reactivity.watch
 
 local module = {} --- @class Addon
 
 local frame = CreateFrame("Frame", nil)
 local onLoadHooks = Array.new()
+local onReadyHooks = Array.new()
 local onUpdateHooks = Array.new()
 local debugValues = {} --- @type table<string, any>
 local listeners = {} --- @type table<WowEvent, Array>
-local hooks = Array.new()
 
---- @class ReactiveData
---- @field get fun(): unknown
---- @field set fun(newValue: unknown)
---- @field sub fun(listener: fun(newValue: unknown)): fun()
-
---- @class ReactiveSavedVariable: ReactiveData
+--- @class SavedVariableRef
+--- @field ref Ref
 --- @field globalName string
 --- @field varName string
 --- @field defaultValue unknown
-
---- @class EventContext
---- @field unsub fun()
-
---- @class HookContext
---- @field unhook fun()
-
---- comment
---- @param initialValue unknown
---- @return ReactiveData
-function module.useState(initialValue)
-  local value = initialValue
-  local subscribers = Array.new()
-
-  local function get()
-    return value
-  end
-
-  local function set(newValue)
-    if value == newValue then
-      return
-    end
-
-    value = newValue
-    subscribers:forEach(
-      function(item)
-        item(value)
-      end
-    )
-  end
-
-  local function sub(listener)
-    subscribers:push(listener)
-
-    return function()
-      subscribers = subscribers:filter(
-        function(item)
-          return item ~= listener
-        end
-      )
-    end
-  end
-
-  return { get = get, set = set, sub = sub }
-end
-
---- comment
---- @param fn fun()
---- @param deps ReactiveData[]
-function module.useEffect(fn, deps)
-  local toPush = { fn = fn, deps = nil }
-
-  if type(deps) == "table" then
-    toPush.deps = Array.new(deps):forEach(
-      function(dep)
-        dep.sub(fn)
-      end
-    )
-
-    module.onLoad(fn)
-  end
-
-  hooks:push(toPush)
-end
-
---- @param fn fun()
---- @param deps ReactiveData[]?
-function module.useMemo(fn, deps)
-end
-
---- comment
-function module.useContext()
-end
 
 --- comment
 --- @param globalName string
 --- @param varName string
 --- @param defaultValue unknown
---- @return ReactiveSavedVariable
+--- @return SavedVariableRef
 function module.useSavedVariable(globalName, varName, defaultValue)
-  local state = module.useState(defaultValue)
+  local state = ref(defaultValue)
 
-  local toRet = {
-    get = state.get,
-    set = state.set,
-    sub = state.sub,
-    globalName = globalName,
-    varName = varName,
-    defaultValue = defaultValue,
-  }
+  local toRet = setmetatable(
+    {}, {
+      __index = function(t, k)
+        if k == "globalName" then
+          return globalName
+        elseif k == "varName" then
+          return varName
+        elseif k == "defaultValue" then
+          return defaultValue
+        else
+          return state[k]
+        end
+      end,
+      __newindex = function(t, k, v)
+        state[k] = v
+      end,
+    }
+  )
 
   module.onLoad(
     function()
@@ -119,18 +54,25 @@ function module.useSavedVariable(globalName, varName, defaultValue)
         _G[globalName][varName] = defaultValue
       end
 
-      toRet.set(_G[globalName][varName])
+      -- toRet.value = _G[globalName][varName]
+      print(
+        "globalName:", globalName, "varName:", varName, "value:",
+        _G[globalName][varName]
+      )
     end
   )
 
-  module.useEffect(
-    function()
-      _G[globalName][varName] = toRet.get()
-    end, { toRet }
+  watch(
+    toRet, function(newValue, oldValue)
+      _G[globalName][varName] = newValue
+    end
   )
 
   return toRet
 end
+
+--- @class EventContext
+--- @field unsub fun()
 
 --- comment
 --- @param fn fun(context: EventContext, eventName: string, ...)
@@ -201,6 +143,9 @@ function module.useSlashCmd(fn, aliases)
     fn(unpack(args))
   end
 end
+
+--- @class HookContext
+--- @field unhook fun()
 
 --- comment
 --- @param fn fun(context: HookContext, ...)
@@ -283,12 +228,12 @@ end
 
 --- comment
 --- @param label string
---- @param dep ReactiveData
+--- @param dep Ref
 function module.useDebugValue(label, dep)
-  module.useEffect(
-    function()
-      debugValues[label] = dep.get()
-    end, { dep }
+  watch(
+    dep, function(newValue, debugValue)
+      debugValues[label] = newValue
+    end, { immediate = true }
   )
 end
 
@@ -305,15 +250,21 @@ function module.print(msg)
 end
 
 --- comment
---- @param fn function
+--- @param fn fun()
 function module.onLoad(fn)
   onLoadHooks:push(fn)
 end
 
 --- comment
---- @param fn function
+--- @param fn fun()
 function module.onInit(fn)
   fn()
+end
+
+--- comment
+--- @param fn fun(isLogin: boolean, isReload: boolean)
+function module.onReady(fn)
+  onReadyHooks:push(fn)
 end
 
 --- comment
@@ -372,6 +323,18 @@ module.useEvent(
       )
     end
   end, { "ADDON_LOADED" }
+)
+
+module.useEvent(
+  function(context, eventName, ...)
+    local args = { ... }
+
+    onReadyHooks:forEach(
+      function(fn)
+        fn(unpack(args))
+      end
+    )
+  end, { "PLAYER_ENTERING_WORLD" }
 )
 
 module.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE

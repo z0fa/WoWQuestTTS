@@ -1,5 +1,4 @@
 local __namespace, __module = ...
-
 local Addon = __module.Addon --- @class Addon
 local Array = __module.Array --- @class Array
 local GameSettings = _G["Settings"]
@@ -55,14 +54,14 @@ function module.init()
     toRet.SetValue = function(self, value, force)
       local tmp = SetValue(self, value, force)
 
-      setting.set(toRet:GetValue())
+      setting.value = toRet:GetValue()
 
       return tmp
     end
 
     onLoad(
       function()
-        toRet:SetValue(setting.get())
+        toRet:SetValue(setting.value)
       end
     )
 

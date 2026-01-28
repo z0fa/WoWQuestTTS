@@ -1,10 +1,10 @@
 local __namespace, __module = ...
-
+local Reactivity = __module.Addon --- @class Reactivity
 local Addon = __module.Addon --- @class Addon
 
+local watch = Reactivity.watch
 local onLoad = Addon.onLoad
 local useHook = Addon.useHook
-local useEffect = Addon.useEffect
 
 local module = {}
 
@@ -39,16 +39,16 @@ function module.init()
     end
   )
 
-  useEffect(
-    function()
-      if isPlaying.get() then
+  watch(
+    { isPlaying }, function(newValue, oldValue)
+      if newValue then
         button:SetNormalTexture("Interface\\TimeManager\\PauseButton")
       else
         button:SetNormalTexture(
           "Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up"
         )
       end
-    end, { isPlaying }
+    end
   )
 
   useHook(
