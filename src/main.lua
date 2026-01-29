@@ -2,10 +2,9 @@ local __namespace, __module = ...
 local Array = __module.Array --- @class Array
 local Reactivity = __module.Reactivity --- @class Reactivity
 local Addon = __module.Addon --- @class Addon
-local CrossExp = __module.CrossExp --- @class Addon
-local Settings = __module.Settings
-local GameSettings = _G["Settings"]
-
+local CrossExp = __module.CrossExp --- @class CrossExp
+local Store = __module.Store --- @class Store
+local Settings = __module.Settings --- @class Settings
 local ref = Reactivity.ref
 local watch = Reactivity.watch
 local onInit = Addon.onInit
@@ -38,7 +37,7 @@ onInit(
 
 onLoad(
   function()
-    module.initPlayButton(module.ttsToggle, module.openSettings)
+    module.initPlayButton(module.ttsToggle, Settings.open)
 
     Settings.alert.value = alertVersion
     -- if (alertVersion > Settings.alert.value) then
@@ -66,7 +65,7 @@ useSlashCmd(
       module.ttsStop()
       print("Stopping...")
     elseif cmd == "settings" then
-      module.openSettings()
+      Settings.open()
     end
   end, { "qtts" }
 )
@@ -372,10 +371,6 @@ function module.getVoice()
   )
 
   return voiceToRet
-end
-
-function module.openSettings()
-  GameSettings.OpenToCategory(Settings.CATEGORY_ID)
 end
 
 function module.initPlayButton(onLeftClick, onRightClick)

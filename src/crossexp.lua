@@ -1,10 +1,9 @@
 local __namespace, __module = ...
 local Addon = __module.Addon --- @class Addon
 local Array = __module.Array --- @class Array
-
 local useHook = Addon.useHook
 
-local module = {}
+local module = {} --- @class CrossExp
 
 function module.isQuestFrameShown()
   if Addon.isRetail then
