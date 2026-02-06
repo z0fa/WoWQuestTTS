@@ -57,12 +57,12 @@ onLoad(
       local originalSetValue = toRet.SetValue
       toRet.SetValue = function(self, value, force)
           local valueToSet = value
-       
+          
           if type(value) == "table" then
               if value.value ~= nil then
                   valueToSet = value.value
               else
-                  return originalSetValue(self, value, force)
+                  valueToSet = defaultValue
               end
           end
 
@@ -71,13 +71,11 @@ onLoad(
           return result
       end
 
-      onLoad(
-        function()
+      onLoad(function()
           if setting.value ~= nil then
             toRet:SetValue(setting.value)
           end
-        end
-      )
+      end)
 
       return toRet
     end
