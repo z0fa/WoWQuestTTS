@@ -54,20 +54,28 @@ onLoad(
         defaultValue
       )
 
-      local SetValue = toRet.SetValue
+      local originalSetValue = toRet.SetValue
       toRet.SetValue = function(self, value, force)
-        local tmp = SetValue(self, value, force)
+          local valueToSet = value
+          
+          if type(value) == "table" then
+              if value.value ~= nil then
+                  valueToSet = value.value
+              else
+                  valueToSet = defaultValue
+              end
+          end
 
-        setting.value = toRet:GetValue()
-
-        return tmp
+          local result = originalSetValue(self, valueToSet, force)
+          setting.value = toRet:GetValue()
+          return result
       end
 
-      onLoad(
-        function()
-          toRet:SetValue(setting.value)
-        end
-      )
+      onLoad(function()
+          if setting.value ~= nil then
+            toRet:SetValue(setting.value)
+          end
+      end)
 
       return toRet
     end
