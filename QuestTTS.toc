@@ -5,6 +5,7 @@
 ## IconTexture: Interface\AddOns\QuestTTS\icon.jpg
 ## SavedVariables: QuestTTSGlobalDB
 ## SavedVariablesPerCharacter: QuestTTSCharacterDB
+## X-Settings-Version: 1
 ## X-Wago-ID: 7nGv2eGx
 ## X-Curse-Project-ID: 504658
 

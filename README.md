@@ -35,6 +35,7 @@ This may happen if the Windows TTS process is not active. Opening the "Speech" s
 - [FangOfAsgard](https://www.curseforge.com/members/fangofasgard): keybind and dynamic voice
 - [MrMartiniMo](https://github.com/MrMartiniMo): reading pause between title and text
 - [BelegCufea](https://github.com/BelegCufea): narrator option, RegisterAddOnSetting fix
+- [legentus](https://github.com/legentus): settings reactivity bug
 
 # Donators Hall of Fame
 

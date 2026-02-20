@@ -336,6 +336,30 @@ module.useEvent(
   end, { "PLAYER_ENTERING_WORLD" }
 )
 
+module.onLoad(
+  function()
+    local settingsVersion = tonumber(
+      C_AddOns.GetAddOnMetadata(
+        __namespace, "X-Settings-Version"
+      )
+    )
+
+    local globalKey = __namespace .. "Global" .. "DB"
+    local characterKey = __namespace .. "Character" .. "DB"
+
+    local globalVersion = (_G[globalKey] or {}).__version or 0
+    local characterVersion = (_G[characterKey] or {}).__version or 0
+
+    if globalVersion < settingsVersion then
+      _G[globalKey] = { __version = settingsVersion }
+    end
+
+    if characterVersion < settingsVersion then
+      _G[characterKey] = { __version = settingsVersion }
+    end
+  end
+)
+
 module.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 module.isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 module.isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC

@@ -39,7 +39,7 @@ onLoad(
     )
 
     watch(
-      { isPlaying }, function(newValue, oldValue)
+      isPlaying, function(newValue, oldValue)
         if newValue then
           button:SetNormalTexture("Interface\\TimeManager\\PauseButton")
         else

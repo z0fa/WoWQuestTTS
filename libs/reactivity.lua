@@ -83,9 +83,9 @@ function module.watch(source, callbackFn, options)
     )
 
     if isRef then
-      callbackFn(newValues, oldValues)
-    else
       callbackFn(newValues[1], oldValues[1])
+    else
+      callbackFn(newValues, oldValues)
     end
 
     oldValues = newValues

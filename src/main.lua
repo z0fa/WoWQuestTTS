@@ -21,7 +21,7 @@ local isPlaying = ref(false)
 local textHistory = Array.new()
 local alertVersion = 1
 -- Some variables to use for narrated text
-local narratorTag = "narrator" -- tag to distinguish normal text from narrated one [narratorTag]nareted text[/narratorTag]
+local narratorTag = "narrator" -- tag to distinguish normal text from narrated one [narratorTag]narrated text[/narratorTag]
 local speechQueue = {} -- queue of text segments, segment is structured as { text: string, voiceID: integer}
 
 onInit(
@@ -159,7 +159,7 @@ end
 
 -- Function to process speechQueue waiting for previous segment to finish (without it sometimes the text segments were swaped for no reason)
 function module.processNextSpeechSegment()
-  -- Just quit if queue is empty or stil pseakinf
+  -- Just quit if queue is empty or still speaking
   if #speechQueue == 0 or isPlaying.value then
     return
   end
@@ -404,7 +404,7 @@ function module.initPlayButton(onLeftClick, onRightClick)
   CrossExp.initPlayButton(buttons, factory)
 
   watch(
-    { isPlaying }, function(newValue, oldValue)
+    isPlaying, function(newValue, oldValue)
       if newValue then
         buttons:forEach(
           (function(button)
