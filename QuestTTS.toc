@@ -1,4 +1,4 @@
-## Interface: 120001, 120000, 110207, 50503, 30405, 20505, 11508
+## Interface: 120100, 120005, 120007, 50504, 50503, 40402, 30405, 38001, 20505, 20506, 11508, 11507
 ## Author: Giovanni Cavallo "z0fa"
 ## Version: @project-version@
 ## Title: QuestTTS
