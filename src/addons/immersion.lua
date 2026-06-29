@@ -1,5 +1,5 @@
 local __namespace, __module = ...
-local Reactivity = __module.Addon --- @class Reactivity
+local Reactivity = __module.Reactivity --- @class Reactivity
 local Addon = __module.Addon --- @class Addon
 local watch = Reactivity.watch
 local onLoad = Addon.onLoad
