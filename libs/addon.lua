@@ -172,7 +172,7 @@ function module.useHook(fn, fnName, hookType, srcTable)
 
   setmetatable(
     hookProxy, {
-      __call = function(...)
+      __call = function(_, ...)
         if not enabled and oldFn then
           return oldFn(...)
         elseif not enabled then

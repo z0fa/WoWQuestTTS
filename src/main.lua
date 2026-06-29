@@ -71,7 +71,7 @@ useSlashCmd(
 )
 
 useGossipUpdateHook(
-  function(self, frame)
+  function(context, frame)
     if not frame:IsShown() then
       return
     end
@@ -86,7 +86,7 @@ useHook(
 )
 
 useHook(
-  function(context, frame, _, event)
+  function(context, frame, event, ...)
     if not frame:IsShown() then
       return
     end

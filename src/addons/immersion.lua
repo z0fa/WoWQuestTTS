@@ -52,7 +52,9 @@ onLoad(
 
     useHook(
 
-      function(self, frame, title, text, npcType, explicitUnit, isToastPlayback)
+      function(
+        context, frame, title, text, npcType, explicitUnit, isToastPlayback
+      )
         if npcType:find("GossipGossip") then
           source = "gossip"
         elseif npcType:find("AvailableQuest") and GetGreetingText() ~= "" then
