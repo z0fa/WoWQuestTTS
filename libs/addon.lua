@@ -144,69 +144,62 @@ function module.useSlashCmd(fn, aliases)
 end
 
 --- @class HookContext
+--- @field enabled boolean
+--- @field oldFn fun(...)
+--- @field srcTable table
+--- @field apply fun(fn: fun(...))
 --- @field unhook fun()
 
 --- comment
---- @param fn fun(context: HookContext, ...)
 --- @param fnName string
 --- @param hookType? "function" | "secure-function" | "widget" | "secure-widget"
 --- @param srcTable? table
 --- @return HookContext
-function module.useHook(fn, fnName, hookType, srcTable)
+function module.useHook(fnName, hookType, srcTable)
   hookType = hookType or "function"
   srcTable = srcTable or _G
 
   local enabled = true
   local oldFn = nil
-  local hookProxy = {}
-
-  local context = {
-    unhook = function()
-      enabled = false
-    end,
-  }
-
-  local hookFn = function(...)
-    return hookProxy(...)
+  local newFn = function()
   end
 
-  setmetatable(
-    hookProxy, {
-      __call = function(_, ...)
-        if not enabled and oldFn then
-          return oldFn(...)
-        elseif not enabled then
-          return
-        end
+  local apply = function(fn)
+    newFn = fn
+  end
+  local unhook = function()
+    enabled = false
+  end
 
-        return fn(context, ...)
-      end,
+  local context = setmetatable(
+    {}, {
       __index = function(t, k)
-        if k == "__enabled" then
+        if k == "enabled" then
           return enabled
-        elseif k == "__oldFn" then
+        elseif k == "oldFn" then
           return oldFn
-        elseif k == "__srcTable" then
+        elseif k == "srcTable" then
           return srcTable
-        elseif type(srcTable[k]) == "function" then
-          return function(_, ...)
-            return srcTable[k](srcTable, ...)
-          end
+        elseif k == "apply" then
+          return apply
+        elseif k == "unhook" then
+          return unhook
         else
-          return srcTable[k]
-        end
-      end,
-      __newindex = function(t, k, v)
-        if k == "__enabled" then
-          enabled = v
-        elseif k == "__oldFn" then
-          oldFn = v
-        else
-          srcTable[k] = v
+          return nil
         end
       end,
     }
   )
+
+  local hookFn = function(...)
+    if not enabled and oldFn then
+      return oldFn(...)
+    elseif not enabled then
+      return
+    end
+
+    return newFn(...)
+  end
 
   if hookType == "function" then
     oldFn = srcTable[fnName]

@@ -51,11 +51,8 @@ onLoad(
       end
     )
 
-    useHook(
-
-      function(
-        context, frame, title, text, npcType, explicitUnit, isToastPlayback
-      )
+    useHook("UpdateTalkingHead", "secure-function", ImmersionFrame).apply(
+      function(frame, title, text, npcType, explicitUnit, isToastPlayback)
         if npcType:find("GossipGossip") then
           source = "gossip"
         elseif npcType:find("AvailableQuest") and GetGreetingText() ~= "" then
@@ -73,13 +70,13 @@ onLoad(
         if not npcType:find("GossipGossip") then
           Main.ttsAutoPlay(source)
         end
-      end, "UpdateTalkingHead", "secure-function", ImmersionFrame
+      end
     )
 
-    useHook(
+    useHook("OnHide", "secure-widget", ImmersionFrame).apply(
       function()
         Main.ttsAutoStop()
-      end, "OnHide", "secure-widget", ImmersionFrame
+      end
     )
   end
 )

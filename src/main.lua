@@ -13,7 +13,6 @@ local useEvent = Addon.useEvent
 local useSlashCmd = Addon.useSlashCmd
 local useHook = Addon.useHook
 local print = Addon.print
-local useGossipUpdateHook = CrossExp.useGossipUpdateHook
 
 local module = {}
 
@@ -70,8 +69,8 @@ useSlashCmd(
   end, { "qtts" }
 )
 
-useGossipUpdateHook(
-  function(context, frame)
+useHook("Update", "secure-function", GossipFrame).apply(
+  function(frame)
     if not frame:IsShown() then
       return
     end
@@ -79,14 +78,14 @@ useGossipUpdateHook(
     module.ttsAutoPlay("gossip")
   end
 )
-useHook(
+useHook("OnHide", "secure-widget", GossipFrame).apply(
   function()
     module.ttsAutoStop()
-  end, "OnHide", "secure-widget", GossipFrame
+  end
 )
 
-useHook(
-  function(context, frame, event, ...)
+useHook("OnEvent", "secure-widget", QuestFrame).apply(
+  function(frame, event, ...)
     if not frame:IsShown() then
       return
     end
@@ -100,12 +99,12 @@ useHook(
     elseif event == "QUEST_COMPLETE" then
       module.ttsAutoPlay("quest:reward")
     end
-  end, "OnEvent", "secure-widget", QuestFrame
+  end
 )
-useHook(
+useHook("OnHide", "secure-widget", QuestFrame).apply(
   function()
     module.ttsAutoStop()
-  end, "OnHide", "secure-widget", QuestFrame
+  end
 )
 
 function module.ttsAutoPlay(source)

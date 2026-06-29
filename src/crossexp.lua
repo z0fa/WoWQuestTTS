@@ -1,7 +1,6 @@
 local __namespace, __module = ...
 local Addon = __module.Addon --- @class Addon
 local Array = __module.Array --- @class Array
-local useHook = Addon.useHook
 
 local module = {} --- @class CrossExp
 
@@ -23,10 +22,6 @@ function module.getQuestLogTitle()
   else
     return GetQuestLogTitle(GetQuestLogSelection())
   end
-end
-
-function module.useGossipUpdateHook(fn)
-  useHook(fn, "Update", "secure-function", GossipFrame)
 end
 
 function module.speakText(voiceId, text, speed, volume)

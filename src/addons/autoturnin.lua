@@ -6,26 +6,31 @@ local useHook = Addon.useHook
 
 onLoad(
   function()
-    local frame = AutoTurnIn
-
-    if not frame or not Settings.hookAutoTurnIn.value then
+    if not AutoTurnIn or not Settings.hookAutoTurnIn.value then
       return
     end
 
     Settings.autoStopRead.value = false
 
-    local function deferAction(self, ...)
-      local args = { ... }
+    local function deferAction(srcTable, oldFn)
+      return function(...)
+        local args = { ... }
 
-      C_Timer.After(
-        1, function()
-          self.__oldFn(self.__srcTable, unpack(args))
-        end
-      )
+        C_Timer.After(
+          1, function()
+            return oldFn(srcTable, unpack(args))
+          end
+        )
+      end
     end
 
-    useHook(deferAction, "QUEST_GREETING", "function", frame)
-    useHook(deferAction, "GOSSIP_SHOW", "function", frame)
-    useHook(deferAction, "QUEST_DETAIL", "function", frame)
+    local h1 = useHook("QUEST_GREETING", "function", AutoTurnIn)
+    h1.apply(deferAction(h1.srcTable, h1.oldFn))
+
+    local h2 = useHook("GOSSIP_SHOW", "function", AutoTurnIn)
+    h2.apply(deferAction(h2.srcTable, h2.oldFn))
+
+    local h3 = useHook("QUEST_DETAIL", "function", AutoTurnIn)
+    h3.apply(deferAction(h3.srcTable, h3.oldFn))
   end
 )
