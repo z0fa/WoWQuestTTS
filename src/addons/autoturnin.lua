@@ -27,6 +27,5 @@ onLoad(
     useHook(deferAction, "QUEST_GREETING", "function", frame)
     useHook(deferAction, "GOSSIP_SHOW", "function", frame)
     useHook(deferAction, "QUEST_DETAIL", "function", frame)
-    useHook(deferAction, "GOSSIP_SHOW", "function", frame)
   end
 )
