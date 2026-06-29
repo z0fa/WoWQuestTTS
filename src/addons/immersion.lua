@@ -7,7 +7,8 @@ local useHook = Addon.useHook
 
 onLoad(
   function()
-    local isPlaying = __module.Main.getState().isPlaying
+    local Main = __module.Main
+    local isPlaying = Main.getState().isPlaying
 
     local source = "gossip"
 
