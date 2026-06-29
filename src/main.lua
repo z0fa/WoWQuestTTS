@@ -86,7 +86,7 @@ useHook(
 )
 
 useHook(
-  function(self, frame, event)
+  function(context, frame, _, event)
     if not frame:IsShown() then
       return
     end
@@ -230,6 +230,7 @@ function module.ttsStop()
   -- Empty speechQueue
   speechQueue = {}
   C_VoiceChat.StopSpeakingText()
+  isPlaying.value = false
 end
 
 -- Add <> for any text we want to be narrated
