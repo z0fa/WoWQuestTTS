@@ -1,6 +1,7 @@
 local __namespace, __module = ...
 local Reactivity = __module.Reactivity --- @class Reactivity
 local Addon = __module.Addon --- @class Addon
+local Settings = __module.Settings --- @class Settings
 local watch = Reactivity.watch
 local onLoad = Addon.onLoad
 local useHook = Addon.useHook
@@ -32,7 +33,7 @@ onLoad(
     button:SetScript(
       "OnClick", function(_, event)
         if event == "RightButton" then
-          Main.openSettings()
+          Settings.open()
         else
           Main.ttsToggle(source)
         end

@@ -18,7 +18,7 @@ onLoad(
 
         C_Timer.After(
           1, function()
-            return oldFn(srcTable, unpack(args))
+            return oldFn(unpack(args))
           end
         )
       end

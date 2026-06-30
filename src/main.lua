@@ -14,7 +14,7 @@ local useSlashCmd = Addon.useSlashCmd
 local useHook = Addon.useHook
 local print = Addon.print
 
-local module = {}
+local module = {} --- @class Main
 
 local isPlaying = ref(false)
 local textHistory = Array.new()
