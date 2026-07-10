@@ -25,14 +25,7 @@ function module.getQuestLogTitle()
 end
 
 function module.speakText(voiceId, text, speed, volume)
-  if Addon.isRetail then
-    C_VoiceChat.SpeakText(voiceId, text, speed, volume)
-  else
-    C_VoiceChat.SpeakText(
-      voiceId, text, Enum.VoiceTtsDestination.LocalPlayback, speed, volume
-    )
-  end
-
+  C_VoiceChat.SpeakText(voiceId, text, speed, volume)
 end
 
 function module.initPlayButton(buttons, factory)
