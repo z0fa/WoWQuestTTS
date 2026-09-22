@@ -24,17 +24,6 @@ function module.getQuestLogTitle()
   end
 end
 
-function module.speakText(voiceId, text, speed, volume)
-  if Addon.isRetail then
-    C_VoiceChat.SpeakText(voiceId, text, speed, volume)
-  else
-    C_VoiceChat.SpeakText(
-      voiceId, text, Enum.VoiceTtsDestination.LocalPlayback, speed, volume
-    )
-  end
-
-end
-
 function module.initPlayButton(buttons, factory)
   if Addon.isRetail then
     buttons:push(
@@ -49,7 +38,7 @@ function module.initPlayButton(buttons, factory)
     buttons:push(factory(QuestFrame, -54, -20, "quest"))
     buttons:push(factory(QuestLogFrame, -56, -13, "quest:focused"))
     -- buttons:push(factory(QuestLogDetailFrame, -24, -13, "quest:focused"))
-    buttons:push(factory(GossipFrame, -54, -20, "gossip"))
+    buttons:push(factory(GossipFrame, -23, 0, "gossip"))
     buttons:push(factory(ItemTextFrame, -55, -14, "book"))
   elseif Addon.isMoP then
     buttons:push(factory(QuestFrame, -23, 0, "quest"))

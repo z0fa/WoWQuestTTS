@@ -166,7 +166,7 @@ function module.processNextSpeechSegment()
   isPlaying.value = true
   local segment = table.remove(speechQueue, 1)
   -- Speak the text
-  CrossExp.speakText(
+  C_VoiceChat.SpeakText(
     segment.voiceID, segment.text, Settings.voiceSpeed.value,
     Settings.voiceVolume.value
   )
@@ -218,7 +218,7 @@ function module.ttsPlay(text)
     module.processNextSpeechSegment()
   else
     isPlaying.value = true
-    CrossExp.speakText(
+    C_VoiceChat.SpeakText(
       module.getVoice().voiceID, text, Settings.voiceSpeed.value,
       Settings.voiceVolume.value
     )
