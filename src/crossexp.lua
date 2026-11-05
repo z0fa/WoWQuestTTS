@@ -54,7 +54,7 @@ function module.initPlayButton(buttons, factory)
       )
     )
     buttons:push(factory(GossipFrame, -25, 0, "gossip"))
-    buttons:push(factory(ItemTextFrame, -55, -14, "book"))
+    buttons:push(factory(ItemTextFrame, -25, 0, "book"))
   else
     buttons:push(factory(QuestFrame, -23, 0, "quest"))
     buttons:push(factory(QuestLogFrame, -23, 0, "quest:focused"))
