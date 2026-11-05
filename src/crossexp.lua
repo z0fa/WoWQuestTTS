@@ -46,6 +46,15 @@ function module.initPlayButton(buttons, factory)
     buttons:push(factory(QuestLogDetailFrame, -23, 0, "quest:focused"))
     buttons:push(factory(GossipFrame, -23, 0, "gossip"))
     buttons:push(factory(ItemTextFrame, -23, 0, "book"))
+  elseif Addon.isForever then
+    buttons:push(factory(QuestFrame, -25, 0, "quest"))
+    buttons:push(
+      factory(
+        QuestMapFrame.DetailsFrame.BackFrame, -8, -10, "quest:focused"
+      )
+    )
+    buttons:push(factory(GossipFrame, -25, 0, "gossip"))
+    buttons:push(factory(ItemTextFrame, -55, -14, "book"))
   else
     buttons:push(factory(QuestFrame, -23, 0, "quest"))
     buttons:push(factory(QuestLogFrame, -23, 0, "quest:focused"))
